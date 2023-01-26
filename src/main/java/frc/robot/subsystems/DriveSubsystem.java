@@ -48,6 +48,7 @@ public class DriveSubsystem extends SubsystemBase
 
   public void arcadeDrive(double speed, double rotation)
   {
+    speed = speed * 0.7;
     robotDrive.arcadeDrive(speed, rotation);
   }
 

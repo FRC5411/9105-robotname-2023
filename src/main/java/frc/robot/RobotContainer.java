@@ -1,5 +1,7 @@
 //In Java We Trust
 
+//IMPORTANT NOTE: Comment out score sequential command initialisation and button config before deploying code
+
 package frc.robot;
 
 import edu.wpi.first.wpilibj2.command.Command;
@@ -45,18 +47,18 @@ public class RobotContainer
       robotDrive
       ));
       
-    scoreLow.addCommands(new ScoreLowCommand(intake, 1), new ReleaseCommand(intake));
-    scoreMedium.addCommands(new ScoreMidCommand(intake, 1), new ReleaseCommand(intake));
-    scoreHigh.addCommands(new ScoreHighCommand(intake, 1), new ReleaseCommand(intake));
+    //scoreLow.addCommands(new ScoreLowCommand(intake, 1), new ReleaseCommand(intake));
+    //scoreMedium.addCommands(new ScoreMidCommand(intake, 1), new ReleaseCommand(intake));
+    //scoreHigh.addCommands(new ScoreHighCommand(intake, 1), new ReleaseCommand(intake));
 
     configureBindings();
   }
 
   private void configureBindings() 
   {
-    aButton.onTrue(scoreLow);
-    bButton.onTrue(scoreMedium);
-    xButton.onTrue(scoreHigh);
+    //aButton.onTrue(scoreLow);
+    //bButton.onTrue(scoreMedium);
+    //xButton.onTrue(scoreHigh);
   }
 
   public Command getAutonomousCommand() 
