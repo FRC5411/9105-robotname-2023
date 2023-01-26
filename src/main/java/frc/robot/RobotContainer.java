@@ -28,7 +28,6 @@ public class RobotContainer
   private Trigger aButton;
   private Trigger bButton;
   private Trigger xButton;
-  private Trigger yButton;
 
   public RobotContainer() 
   {
@@ -39,7 +38,6 @@ public class RobotContainer
     aButton = controller.a();
     bButton = controller.b();
     xButton = controller.x();
-    yButton = controller.y();
 
     robotDrive.setDefaultCommand(new ArcadeCommand(
       () -> controller.getLeftY(), 
