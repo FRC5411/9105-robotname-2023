@@ -10,7 +10,6 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.ArcadeCommand;
 import frc.robot.commands.ReleaseCommand;
-import frc.robot.commands.ScoreHighCommand;
 import frc.robot.commands.ScoreLowCommand;
 import frc.robot.commands.ScoreMidCommand;
 import frc.robot.subsystems.ArmSubsystem;
@@ -25,7 +24,6 @@ public class RobotContainer
   
   private SequentialCommandGroup scoreLow;
   private SequentialCommandGroup scoreMedium;
-  private SequentialCommandGroup scoreHigh;
 
   private Trigger aButton;
   private Trigger bButton;
@@ -49,7 +47,6 @@ public class RobotContainer
       
     //scoreLow.addCommands(new ScoreLowCommand(intake, 1), new ReleaseCommand(intake));
     //scoreMedium.addCommands(new ScoreMidCommand(intake, 1), new ReleaseCommand(intake));
-    //scoreHigh.addCommands(new ScoreHighCommand(intake, 1), new ReleaseCommand(intake));
 
     configureBindings();
   }
@@ -58,7 +55,6 @@ public class RobotContainer
   {
     //aButton.onTrue(scoreLow);
     //bButton.onTrue(scoreMedium);
-    //xButton.onTrue(scoreHigh);
   }
 
   public Command getAutonomousCommand() 
@@ -66,3 +62,4 @@ public class RobotContainer
     return null;
   }
 }
+// Nice

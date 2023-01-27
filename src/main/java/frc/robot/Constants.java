@@ -8,8 +8,8 @@ public final class Constants
   public static class DrivetrainConstants 
   {
     public static int leftFrontMotor = 1;
-    public static int rightFrontMotor = 2;
-    public static int leftBackMotor = 3;
+    public static int rightFrontMotor = 3;
+    public static int leftBackMotor = 2;
     public static int rightBackMotor = 4;
 
     public static int controllerPort = 0;
