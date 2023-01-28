@@ -31,6 +31,7 @@ public class ReleaseCommand extends CommandBase
     @Override
     public void end(boolean interrupted) 
     {
+      armSubsystem.setHandMotorSped(0);
       System.out.println("Command RELEASE has stopped");
     }
   
