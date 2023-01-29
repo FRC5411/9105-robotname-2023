@@ -58,6 +58,11 @@ public class DriveSubsystem extends SubsystemBase
 
     leftMotors.setInverted(true);
 
+    leftFrontMotor.setSmartCurrentLimit(80);
+    leftBackMotor.setSmartCurrentLimit(80);
+    rightFrontMotor.setSmartCurrentLimit(80);
+    rightBackMotor.setSmartCurrentLimit(80);
+
     robotDrive = new DifferentialDrive(leftMotors, rightMotors);
 
     //Enocders
@@ -166,6 +171,16 @@ public class DriveSubsystem extends SubsystemBase
     return navX;
   }
 
+  public double getLeftMotorTemp()
+  {
+    return leftFrontMotor.getMotorTemperature();
+  }
+
+  public double getRightMotorTemp()
+  {
+    return rightFrontMotor.getMotorTemperature();
+  }
+
   public void resetOdometry(Pose2d pose)
   {
     resetEncoders();
@@ -207,6 +222,8 @@ public class DriveSubsystem extends SubsystemBase
     SmartDashboard.putNumber("Left Encoder Val: ", getLeftEncoderPosition());
     SmartDashboard.putNumber("Right Encoder Val: ", getRightEncoderPosition());
     SmartDashboard.putNumber("Gyro Heading: ", getGyroHeading());
+    SmartDashboard.putNumber("Left Motor Temp: ", getLeftMotorTemp());
+    SmartDashboard.putNumber("Right Motor Temp: ", getRightMotorTemp());
   }
 
   @Override
