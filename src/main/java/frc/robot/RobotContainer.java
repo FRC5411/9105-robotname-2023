@@ -37,7 +37,6 @@ public class RobotContainer
   private CommandXboxController controller;
 
   private DriveSubsystem robotDrive;
-  private DriveSubsystem drive = new DriveSubsystem();
   private ArmSubsystem intake;
   
   private SequentialCommandGroup scoreLow;
