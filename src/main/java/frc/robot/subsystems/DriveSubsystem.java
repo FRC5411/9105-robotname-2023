@@ -32,7 +32,7 @@ public class DriveSubsystem extends SubsystemBase
   private RelativeEncoder leftEncoder;
   private RelativeEncoder rightEncoder;
 
-  public Gyro navX;
+  public AHRS navX;
 
   private DifferentialDriveOdometry odometry;
 
@@ -106,7 +106,9 @@ public class DriveSubsystem extends SubsystemBase
     }
 
     speed = speed * 0.7;
-    robotDrive.arcadeDrive(speed, rotation, true);
+    leftMotors.set(speed + rotation);
+    rightMotors.set(speed - rotation);
+
   }
 
   //Lots of getter/setter methods
@@ -209,6 +211,16 @@ public class DriveSubsystem extends SubsystemBase
   {
     navX.calibrate();
     navX.reset();
+  }
+
+  public void setLeftMotorSpeed(double speed)
+  {
+    leftMotors.set(speed);
+  }
+
+  public void setRightMotorSpeed(double speed)
+  {
+    rightMotors.set(speed);
   }
 
   //End of getter/setter methods
