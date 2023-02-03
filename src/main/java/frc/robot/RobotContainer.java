@@ -31,6 +31,9 @@ import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.*;
+import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.cscore.CvSink;
+import edu.wpi.first.cscore.CvSource;
 
 public class RobotContainer 
 {
@@ -75,6 +78,9 @@ public class RobotContainer
      true));
 
     Shuffleboard.getTab("Autonomous: ").add(chooser);
+
+    //Camera stuff
+    CameraServer.startAutomaticCapture();
 
     configureBindings();
   }
