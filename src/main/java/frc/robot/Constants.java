@@ -31,28 +31,34 @@ public final class Constants {
 
   public static class AutonoumousConstants {
     
-        // Note: Update values accordingly
-        public static final double VOLTS = 0;
-        public static final double VOLT_SECONDS_PER_METER = 0;
-        public static final double VOLT_SECONDS_SQUARED_PER_METER = 0;
-        public static final double DRIVE_VELOCITY = 0;
+    // Note: Update values accordingly
+    public static final double VOLTS = 0;
+    public static final double VOLT_SECONDS_PER_METER = 0;
+    public static final double VOLT_SECONDS_SQUARED_PER_METER = 0;
+    public static final double DRIVE_VELOCITY = 0;
     
-        // Note: Update values accordingly
-        public static final double TRACK_WIDTH_METERS = Units.inchesToMeters(1); // Horizontal dist between 2 wheels (Meters)
-        public static final DifferentialDriveKinematics DRIVE_KINEMATICS = new 
-          DifferentialDriveKinematics(TRACK_WIDTH_METERS);
+    // Note: Update values accordingly
+    public static final double TRACK_WIDTH_METERS = Units.inchesToMeters(6); // Horizontal dist between 2 wheels (Meters)
+    public static final DifferentialDriveKinematics DRIVE_KINEMATICS = new 
+      DifferentialDriveKinematics(TRACK_WIDTH_METERS);
     
-        public static final double MAX_SPEED_METERS_PER_SECOND = 3; // Leave as is
-        public static final double MAX_ACCELERATION = 3; // Leave as is
+    public static final double MAX_SPEED_METERS_PER_SECOND = 3; // Leave as is
+    public static final double MAX_ACCELERATION = 3; // Leave as is
     
-        public static final double RAMSETE_B = 2; // Leave as is
-        public static final double RAMSETE_ZETA = 0.7; // Leave as is
+    public static final double RAMSETE_B = 2; // Leave as is
+    public static final double RAMSETE_ZETA = 0.7; // Leave as is
     
-        // Note: update ratios accordingly
-        public static final double GEAR_RATIO = 12.6; // Gearbox ratio
-        public static final double WHEEL_RADIUS = 0; // Radius of wheel in inches
+    // Note: update ratios accordingly
+    public static final double GEAR_RATIO = 7.9; // Gearbox ratio
+     public static final double WHEEL_RADIUS = 3; // Radius of wheel in inches
     
-        public static final double LINEAR_DIST_CONVERSION_FACTOR = 
-        (convertToLinDist(GEAR_RATIO, WHEEL_RADIUS)); // Converts ticks to metres
+    public static final double LINEAR_DIST_CONVERSION_FACTOR = 
+      (convertToLinDist(GEAR_RATIO, WHEEL_RADIUS)); // Converts ticks to metres
+  }
+
+  public static class IntakeConstants {
+
+    public static final int ARM_MOTOR = 5;
+    public static final int GRABBER_MOTOR = 6;
   }
 }

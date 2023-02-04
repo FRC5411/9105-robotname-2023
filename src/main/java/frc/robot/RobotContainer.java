@@ -3,6 +3,7 @@
 /*
  * Note: Fix path planner loading path
  */
+
 package frc.robot;
 
 import com.pathplanner.lib.PathConstraints;
@@ -35,7 +36,7 @@ public class RobotContainer {
     /* Default Drive & Controller */
     controller = new CommandXboxController(Constants.DrivebaseConstants.CONTROLLER_PORT);
     robotDrive = new DriveSubsystem();
-    sniperMode = false; // Add button for this
+    sniperMode = false;
 
     LT = controller.leftTrigger();
 
