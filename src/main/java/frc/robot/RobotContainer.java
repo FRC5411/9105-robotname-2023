@@ -1,130 +1,81 @@
 //In Java We Trust
 
-//IMPORTANT NOTE: Comment out score sequential command initialisation and button config before deploying code
-
+/*
+ * Note: Fix path planner loading path
+ */
 package frc.robot;
 
-import java.io.IOException;
-import java.nio.file.FileSystem;
-import java.nio.file.Path;
+import com.pathplanner.lib.PathConstraints;
+import com.pathplanner.lib.PathPlanner;
+import com.pathplanner.lib.PathPlannerTrajectory;
 
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.RamseteController;
-import edu.wpi.first.math.controller.SimpleMotorFeedforward;
-import edu.wpi.first.math.trajectory.Trajectory;
-import edu.wpi.first.math.trajectory.TrajectoryUtil;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.RamseteCommand;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.commands.ArcadeCommand;
-import frc.robot.commands.ReleaseCommand;
-import frc.robot.commands.ScoreLowCommand;
-import frc.robot.commands.ScoreMidCommand;
-import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
-import frc.robot.Constants.DriveConstants;
-import frc.robot.Constants.*;
+import frc.robot.commands.ArcadeCommand;
 
-public class RobotContainer 
-{
+public class RobotContainer {
+
   private CommandXboxController controller;
 
   private DriveSubsystem robotDrive;
-  private ArmSubsystem intake;
-  
-  private SequentialCommandGroup scoreLow;
-  private SequentialCommandGroup scoreMedium;
+  private boolean sniperMode;
 
-  private Trigger aButton;
-  private Trigger bButton;
-  private Trigger xButton;
+  private ArcadeCommand sniperCommand;
 
-  SendableChooser <Command> chooser;
+  Trigger LT;
 
-  public RobotContainer() 
-  {
-    controller = new CommandXboxController(Constants.DrivetrainConstants.controllerPort);
+  SendableChooser <Command> autonChooser;
+
+  public RobotContainer() {
+
+    /* Default Drive & Controller */
+    controller = new CommandXboxController(Constants.DrivebaseConstants.CONTROLLER_PORT);
     robotDrive = new DriveSubsystem();
-    intake = new ArmSubsystem();
+    sniperMode = false; // Add button for this
 
-    aButton = controller.a();
-    bButton = controller.b();
-    xButton = controller.x();
+    LT = controller.leftTrigger();
 
     robotDrive.setDefaultCommand(new ArcadeCommand(
       () -> controller.getLeftY(), 
       () -> controller.getRightX(), 
+      sniperMode,
       robotDrive
       ));
-      
-    //scoreLow.addCommands(new ScoreLowCommand(intake, 1), new ReleaseCommand(intake));
-    //scoreMedium.addCommands(new ScoreMidCommand(intake, 1), new ReleaseCommand(intake));
 
-    chooser = new SendableChooser<>();
+    /* Sniper command */
+    sniperCommand = new ArcadeCommand(
+      () -> controller.getLeftY(), 
+      () -> controller.getRightX(), 
+      !sniperMode, 
+      robotDrive);
+    
+    /* Auton Button */
+    autonChooser = new SendableChooser<>();
 
     //Adds button options
-    chooser.addOption("Test Path", loadPathPlannerTrajetoryToRamseteCommand(
-      "../../../deploy/pathplanner/generatedJSON/TestPath.wpilib.json",
+    PathConstraints trajectoryConstraints = new PathConstraints(Constants.AutonoumousConstants.DRIVE_VELOCITY, Constants.AutonoumousConstants.MAX_ACCELERATION);
+    PathPlannerTrajectory mainTrajectory = PathPlanner.loadPath("../../../deploy/pathplanner/generatedJSON/TestPath.wpilib.json" /*"/Users/k2so/Documents/GitHub/9105-robotname-2023/src/main/deploy/pathplanner/generatedJSON/TestPath.wpilib.json"*/, trajectoryConstraints);
+
+    autonChooser.addOption("Test Path", robotDrive.followPath(
+      mainTrajectory,
      true));
 
-    Shuffleboard.getTab("Autonomous: ").add(chooser);
-
+    Shuffleboard.getTab("Autonomous: ").add(autonChooser);
+    
     configureBindings();
   }
 
-  public Command loadPathPlannerTrajetoryToRamseteCommand(String filename, boolean resetOdometry)
-  {
-    Trajectory trajectory;
-    try {
-      Path trajectoryPath = Filesystem.getDeployDirectory().toPath().resolve(filename);
-      trajectory = TrajectoryUtil.fromPathweaverJson(trajectoryPath);
-    }catch(IOException exception){
-      DriverStation.reportError("Unable to open trajectory: " + filename, exception.getStackTrace());
-      System.out.println("Unable to read from file: " + filename);
+  private void configureBindings() {
 
-      //Returns this so robot doesnt do anything
-      return new InstantCommand();
-    }
-
-    RamseteCommand ramseteCommand = new RamseteCommand(
-      trajectory, 
-      robotDrive::getPose, 
-      new RamseteController(Constants.DriveConstants.kRamseteB, Constants.DriveConstants.kRamseteZeta), 
-      new SimpleMotorFeedforward(Constants.DriveConstants.ksVolts, Constants.DriveConstants.kvVoltSecondsPerMeter, Constants.DriveConstants.kaVoltSecondsSquaredPerMeter), 
-      Constants.DriveConstants.kDriveKinematics, 
-      robotDrive::getWheelSpeeds, 
-      new PIDController(Constants.DriveConstants.kPDriveVel, 0, 0), 
-      new PIDController(Constants.DriveConstants.kPDriveVel, 0, 0), 
-      robotDrive::setTankDriveVolts, 
-      robotDrive);
-
-    //Reset odometry first and then run command
-    if (resetOdometry) 
-    {
-      return new SequentialCommandGroup(
-        new InstantCommand(() -> robotDrive.resetOdometry(trajectory.getInitialPose())),ramseteCommand);
-    }
-    else 
-    {
-      return ramseteCommand;
-    }
+    LT.onTrue(sniperCommand);
   }
 
-  private void configureBindings() 
-  {
-    //aButton.onTrue(scoreLow);
-    //bButton.onTrue(scoreMedium);
-  }
-
-  public Command getAutonomousCommand() 
-  {
+  public Command getAutonomousCommand() {
+    
     return null;
   }
 }
