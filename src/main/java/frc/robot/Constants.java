@@ -16,13 +16,14 @@ public final class Constants {
   }
 
   public static class DrivebaseConstants {
-
     public static final int LF_MOTOR = 1;
     public static final int LB_MOTOR = 2;
     public static final int RF_MOTOR = 3;
     public static final int RB_MOTOR = 4;
 
     public static final int CONTROLLER_PORT = 0;
+
+    public static final int MOTOR_AMP_LIMIT = 80;
   }
   
   public static class LEDsConstants {
@@ -30,7 +31,6 @@ public final class Constants {
   }
 
   public static class AutonoumousConstants {
-    
     // Note: Update values accordingly
     public static final double VOLTS = 0;
     public static final double VOLT_SECONDS_PER_METER = 0;
@@ -57,7 +57,6 @@ public final class Constants {
   }
 
   public static class IntakeConstants {
-
     public static final int ARM_MOTOR = 5;
     public static final int GRABBER_MOTOR = 6;
   }

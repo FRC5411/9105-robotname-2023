@@ -44,7 +44,6 @@ public class DriveSubsystem extends SubsystemBase {
   private DifferentialDriveOdometry odometry;
 
   public DriveSubsystem() {
-
     /* Robot Drive */
     leftFrontMotor = new CANSparkMax(
       Constants.DrivebaseConstants.LF_MOTOR,
@@ -76,10 +75,10 @@ public class DriveSubsystem extends SubsystemBase {
 
     leftMotors.setInverted(true);
 
-    leftFrontMotor.setSmartCurrentLimit(80);
-    leftBackMotor.setSmartCurrentLimit(80);
-    rightFrontMotor.setSmartCurrentLimit(80);
-    rightBackMotor.setSmartCurrentLimit(80);
+    leftFrontMotor.setSmartCurrentLimit(Constants.DrivebaseConstants.MOTOR_AMP_LIMIT);
+    leftBackMotor.setSmartCurrentLimit(Constants.DrivebaseConstants.MOTOR_AMP_LIMIT);
+    rightFrontMotor.setSmartCurrentLimit(Constants.DrivebaseConstants.MOTOR_AMP_LIMIT);
+    rightBackMotor.setSmartCurrentLimit(Constants.DrivebaseConstants.MOTOR_AMP_LIMIT);
 
     robotDrive = new DifferentialDrive(leftMotors, rightMotors);
 
@@ -116,13 +115,34 @@ public class DriveSubsystem extends SubsystemBase {
   }
 
   public void arcadeDrive(double speed, double rotation, boolean sniperMode) {
+    //speed = (speed < 0.1 && speed > -0.1) ? 0 : speed * 0.7; // Also reduces the speed to 70%
+    //rotation = (rotation < 0.1 && rotation > -0.1) ? 0 : rotation;
+    /* 
+    if (speed < 0.1 && speed > -0.1) {
+      if (speed > 0) {
+        speed = Math.sqrt(speed);
+      }
+      else {
+        speed = -1 * Math.sqrt(Math.abs(speed));
+      }
+    }
 
-    speed = (speed < 0.1 && speed > -0.1) ? 0 : speed * 0.7; // Also reduces the speed to 70%
+    if (rotation < 0.1 && rotation > -0.1) {
+      if (rotation > 0) {
+        rotation = Math.sqrt(rotation);
+      }
+      else {
+        rotation = -1 * Math.sqrt(Math.abs(rotation));
+      }
+    }
+    */
+
+    speed = (speed < 0.1 && speed > -0.1) ? ((speed > 0) ? Math.sqrt(speed) : -1 * Math.sqrt(Math.abs(speed))) : speed;
+    rotation = (rotation < 0.1 && rotation > -0.1) ? ((rotation > 0) ? Math.sqrt(rotation) : -1 * Math.sqrt(Math.abs(rotation))) : rotation;
+
     speed = (sniperMode) ? speed : speed * 0.5;
-    rotation = (rotation < 0.1 && rotation > -0.1) ? 0 : rotation;
-
-    leftMotors.set(speed + rotation);
-    rightMotors.set(speed - rotation);
+    leftMotors.set(speed - rotation);
+    rightMotors.set(speed + rotation);
   }
 
   /* Autonomous Getter / Setter Methods */
@@ -188,8 +208,8 @@ public class DriveSubsystem extends SubsystemBase {
     leftEncoder.setPosition(0);
   }
 
+  /* Auton Command */
   public Command followPath(PathPlannerTrajectory trajectory, boolean resetOdometry) {
-
     return new SequentialCommandGroup(
       new InstantCommand(() -> {
         if (resetOdometry) {

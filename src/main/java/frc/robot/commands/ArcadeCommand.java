@@ -16,7 +16,6 @@ public class ArcadeCommand extends CommandBase {
   private boolean sniperMode;
 
   public ArcadeCommand(DoubleSupplier speed, DoubleSupplier rotation, boolean sniperMode, DriveSubsystem robotDrive) {
-
     this.speed = speed;
     this.rotation = rotation;
     this.robotDrive = robotDrive;
@@ -26,19 +25,16 @@ public class ArcadeCommand extends CommandBase {
 
   @Override
   public void initialize() {
-
     System.out.println("Command ARCADE has started");
   }
 
   @Override
   public void execute() {
-
     robotDrive.arcadeDrive(speed.getAsDouble(), rotation.getAsDouble(), sniperMode);
   }
 
   @Override
   public void end(boolean interrupted) {
-
     System.out.println("Command ARCADE has ended");
   }
 

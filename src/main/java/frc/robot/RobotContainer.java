@@ -32,7 +32,6 @@ public class RobotContainer {
   SendableChooser <Command> autonChooser;
 
   public RobotContainer() {
-
     /* Default Drive & Controller */
     controller = new CommandXboxController(Constants.DrivebaseConstants.CONTROLLER_PORT);
     robotDrive = new DriveSubsystem();
@@ -57,7 +56,6 @@ public class RobotContainer {
     /* Auton Button */
     autonChooser = new SendableChooser<>();
 
-    //Adds button options
     PathConstraints trajectoryConstraints = new PathConstraints(Constants.AutonoumousConstants.DRIVE_VELOCITY, Constants.AutonoumousConstants.MAX_ACCELERATION);
     PathPlannerTrajectory mainTrajectory = PathPlanner.loadPath("../../../deploy/pathplanner/generatedJSON/TestPath.wpilib.json" /*"/Users/k2so/Documents/GitHub/9105-robotname-2023/src/main/deploy/pathplanner/generatedJSON/TestPath.wpilib.json"*/, trajectoryConstraints);
 
@@ -71,7 +69,6 @@ public class RobotContainer {
   }
 
   private void configureBindings() {
-
     LT.onTrue(sniperCommand);
   }
 
