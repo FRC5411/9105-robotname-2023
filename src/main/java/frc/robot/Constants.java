@@ -50,7 +50,7 @@ public final class Constants {
     
     // Note: update ratios accordingly
     public static final double GEAR_RATIO = 7.9; // Gearbox ratio
-     public static final double WHEEL_RADIUS = 3; // Radius of wheel in inches
+    public static final double WHEEL_RADIUS = 3; // Radius of wheel in inches
     
     public static final double LINEAR_DIST_CONVERSION_FACTOR = 
       (convertToLinDist(GEAR_RATIO, WHEEL_RADIUS)); // Converts ticks to metres

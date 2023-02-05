@@ -140,7 +140,7 @@ public class DriveSubsystem extends SubsystemBase {
     speed = (speed < 0.1 && speed > -0.1) ? ((speed > 0) ? Math.sqrt(speed) : -1 * Math.sqrt(Math.abs(speed))) : speed;
     rotation = (rotation < 0.1 && rotation > -0.1) ? ((rotation > 0) ? Math.sqrt(rotation) : -1 * Math.sqrt(Math.abs(rotation))) : rotation;
 
-    speed = (sniperMode) ? speed : speed * 0.5;
+    speed = (sniperMode) ?  speed * 0.5 : speed;
     leftMotors.set(speed - rotation);
     rightMotors.set(speed + rotation);
   }
