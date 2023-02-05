@@ -137,10 +137,10 @@ public class DriveSubsystem extends SubsystemBase {
     }
     */
 
-    speed = (speed < 0.1 && speed > -0.1) ? ((speed > 0) ? Math.sqrt(speed) : -1 * Math.sqrt(Math.abs(speed))) : speed;
-    rotation = (rotation < 0.1 && rotation > -0.1) ? ((rotation > 0) ? Math.sqrt(rotation) : -1 * Math.sqrt(Math.abs(rotation))) : rotation;
+    speed = (speed < Constants.DrivebaseConstants.DEADZONE && speed > -Constants.DrivebaseConstants.DEADZONE) ? ((speed > 0) ? Math.sqrt(speed) : -1 * Math.sqrt(Math.abs(speed))) : speed;
+    rotation = (rotation < Constants.DrivebaseConstants.DEADZONE && rotation > -Constants.DrivebaseConstants.DEADZONE) ? ((rotation > 0) ? Math.sqrt(rotation) : -1 * Math.sqrt(Math.abs(rotation))) : rotation;
 
-    speed = (sniperMode) ?  speed * 0.5 : speed;
+    speed = (sniperMode) ?  speed * Constants.DrivebaseConstants.SNIPER_SPEED : speed;
     leftMotors.set(speed - rotation);
     rightMotors.set(speed + rotation);
   }

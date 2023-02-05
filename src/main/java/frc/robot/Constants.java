@@ -24,6 +24,8 @@ public final class Constants {
     public static final int CONTROLLER_PORT = 0;
 
     public static final int MOTOR_AMP_LIMIT = 80;
+    public static final double DEADZONE = 0.1;
+    public static final double SNIPER_SPEED = 0.2;
   }
   
   public static class LEDsConstants {
@@ -59,5 +61,8 @@ public final class Constants {
   public static class IntakeConstants {
     public static final int ARM_MOTOR = 5;
     public static final int GRABBER_MOTOR = 6;
+
+    public static final int ARM_MOTOR_CURRENT_LIMIT = 60;
+    public static final int GRABBER_MOTOR_CURRENT_LIMIT = 30;
   }
 }
