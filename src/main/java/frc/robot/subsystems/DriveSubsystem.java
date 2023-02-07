@@ -41,6 +41,8 @@ public class DriveSubsystem extends SubsystemBase {
 
   private double DEADZONE_VAL;
   private double SNIPER_SPEED;
+  private double SPEED;
+  private double ROTATION;
 
   private AHRS navX;
 
@@ -68,6 +70,7 @@ public class DriveSubsystem extends SubsystemBase {
       CANSparkMax.MotorType.kBrushless
     );
 
+    /* 
     leftFrontMotor.setIdleMode(IdleMode.kBrake);
     leftBackMotor.setIdleMode(IdleMode.kBrake);
     rightFrontMotor.setIdleMode(IdleMode.kBrake);
@@ -80,16 +83,19 @@ public class DriveSubsystem extends SubsystemBase {
     rightMotors = new MotorControllerGroup(rightFrontMotor, rightBackMotor);
 
     leftMotors.setInverted(true);
-
+     
     leftFrontMotor.setSmartCurrentLimit(Constants.DrivebaseConstants.MOTOR_AMP_LIMIT);
     leftBackMotor.setSmartCurrentLimit(Constants.DrivebaseConstants.MOTOR_AMP_LIMIT);
     rightFrontMotor.setSmartCurrentLimit(Constants.DrivebaseConstants.MOTOR_AMP_LIMIT);
     rightBackMotor.setSmartCurrentLimit(Constants.DrivebaseConstants.MOTOR_AMP_LIMIT);
+    */
 
-    robotDrive = new DifferentialDrive(leftMotors, rightMotors);
+    robotDrive = new DifferentialDrive(leftFrontMotor, rightFrontMotor);
 
     DEADZONE_VAL = Constants.DrivebaseConstants.DEADZONE;
     SNIPER_SPEED = Constants.DrivebaseConstants.SNIPER_SPEED;
+    SPEED = 0.95;
+    ROTATION = 0.4;
 
     /* Encoders */
     leftEncoder = leftFrontMotor.getEncoder();
@@ -148,13 +154,15 @@ public class DriveSubsystem extends SubsystemBase {
       }
     }
 
-    speed = (sniperMode) ?  speed * SNIPER_SPEED : speed;
-    rotation = (sniperMode) ?  rotation * SNIPER_SPEED : rotation;
+    speed = (sniperMode) ?  speed * SNIPER_SPEED : speed * SPEED;
+    rotation = (sniperMode) ?  rotation * SNIPER_SPEED : rotation * ROTATION;
 
+    /* 
     leftMotors.set(speed - rotation);
     rightMotors.set(speed + rotation);
 
-    robotDrive.feed();
+    robotDrive.feed();*/
+    robotDrive.arcadeDrive(speed, rotation);
   }
 
   /* Autonomous Getter / Setter Methods */
@@ -196,8 +204,8 @@ public class DriveSubsystem extends SubsystemBase {
   }
 
   public void setTankDriveVolts(double leftVolts, double rightVolts) {
-    leftMotors.setVoltage(leftVolts);
-    rightMotors.setVoltage(rightVolts);
+    leftFrontMotor.setVoltage(leftVolts);
+    rightFrontMotor.setVoltage(rightVolts);
     robotDrive.feed();
   }
 
@@ -257,8 +265,8 @@ public class DriveSubsystem extends SubsystemBase {
     return new SequentialCommandGroup(
       new InstantCommand(
         () -> {
-          leftMotors.set(speed);
-          rightMotors.set(speed);
+          leftFrontMotor.set(speed);
+          rightFrontMotor.set(speed);
         }
       )
     );
