@@ -10,8 +10,10 @@ import com.pathplanner.lib.PathConstraints;
 import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
 
+import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -28,6 +30,7 @@ public class RobotContainer {
   private ArcadeCommand sniperCommand;
 
   Trigger LT;
+  Debouncer debouncer;
 
   SendableChooser <Command> autonChooser;
 
@@ -37,7 +40,8 @@ public class RobotContainer {
     robotDrive = new DriveSubsystem();
     sniperMode = false;
 
-    LT = controller.leftTrigger();
+    LT = controller.leftTrigger(0.1);
+    debouncer = new Debouncer(4);
 
     robotDrive.setDefaultCommand(new ArcadeCommand(
       () -> controller.getLeftY(), 
@@ -47,12 +51,14 @@ public class RobotContainer {
       ));
 
     /* Sniper command */
-    sniperCommand = new ArcadeCommand(
-      () -> controller.getLeftY(), 
-      () -> controller.getRightX(), 
-      !sniperMode, 
-      robotDrive);
-    
+    if (debouncer.calculate(LT.getAsBoolean())) {
+      sniperCommand = new ArcadeCommand(
+        () -> controller.getLeftY(), 
+        () -> controller.getRightX(), 
+        !sniperMode, 
+        robotDrive);
+    }
+
     /* Auton Button */
     autonChooser = new SendableChooser<>();
 
@@ -64,12 +70,15 @@ public class RobotContainer {
      true));
 
     Shuffleboard.getTab("Autonomous: ").add(autonChooser);
+
+    SmartDashboard.putNumber("Left Joystick Y: ", controller.getLeftY());
+    SmartDashboard.putNumber("Right Joystick X: ", controller.getRightX());
     
     configureBindings();
   }
 
   private void configureBindings() {
-    LT.onTrue(sniperCommand);
+    LT.toggleOnTrue(sniperCommand);
   }
 
   public Command getAutonomousCommand() {

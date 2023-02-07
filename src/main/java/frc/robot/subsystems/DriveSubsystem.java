@@ -39,6 +39,9 @@ public class DriveSubsystem extends SubsystemBase {
   private RelativeEncoder leftEncoder;
   private RelativeEncoder rightEncoder;
 
+  private double DEADZONE_VAL;
+  private double SNIPER_SPEED;
+
   private AHRS navX;
 
   private DifferentialDriveOdometry odometry;
@@ -70,6 +73,9 @@ public class DriveSubsystem extends SubsystemBase {
     rightFrontMotor.setIdleMode(IdleMode.kBrake);
     rightBackMotor.setIdleMode(IdleMode.kBrake);
 
+    leftBackMotor.follow(leftFrontMotor);
+    rightBackMotor.follow(rightFrontMotor);
+
     leftMotors = new MotorControllerGroup(leftFrontMotor, leftBackMotor);
     rightMotors = new MotorControllerGroup(rightFrontMotor, rightBackMotor);
 
@@ -81,6 +87,9 @@ public class DriveSubsystem extends SubsystemBase {
     rightBackMotor.setSmartCurrentLimit(Constants.DrivebaseConstants.MOTOR_AMP_LIMIT);
 
     robotDrive = new DifferentialDrive(leftMotors, rightMotors);
+
+    DEADZONE_VAL = Constants.DrivebaseConstants.DEADZONE;
+    SNIPER_SPEED = Constants.DrivebaseConstants.SNIPER_SPEED;
 
     /* Encoders */
     leftEncoder = leftFrontMotor.getEncoder();
@@ -117,8 +126,11 @@ public class DriveSubsystem extends SubsystemBase {
   public void arcadeDrive(double speed, double rotation, boolean sniperMode) {
     //speed = (speed < 0.1 && speed > -0.1) ? 0 : speed * 0.7; // Also reduces the speed to 70%
     //rotation = (rotation < 0.1 && rotation > -0.1) ? 0 : rotation;
-    /* 
-    if (speed < 0.1 && speed > -0.1) {
+
+    //speed = (speed < Constants.DrivebaseConstants.DEADZONE && speed > -Constants.DrivebaseConstants.DEADZONE) ? ((speed > 0) ? Math.sqrt(speed) : -1 * Math.sqrt(Math.abs(speed))) : speed;
+    //rotation = (rotation < Constants.DrivebaseConstants.DEADZONE && rotation > -Constants.DrivebaseConstants.DEADZONE) ? ((rotation > 0) ? Math.sqrt(rotation) : -1 * Math.sqrt(Math.abs(rotation))) : rotation;
+    
+    if (speed < DEADZONE_VAL && speed > -DEADZONE_VAL) {
       if (speed > 0) {
         speed = Math.sqrt(speed);
       }
@@ -127,7 +139,7 @@ public class DriveSubsystem extends SubsystemBase {
       }
     }
 
-    if (rotation < 0.1 && rotation > -0.1) {
+    if (rotation < DEADZONE_VAL && rotation > -DEADZONE_VAL) {
       if (rotation > 0) {
         rotation = Math.sqrt(rotation);
       }
@@ -135,14 +147,14 @@ public class DriveSubsystem extends SubsystemBase {
         rotation = -1 * Math.sqrt(Math.abs(rotation));
       }
     }
-    */
 
-    speed = (speed < Constants.DrivebaseConstants.DEADZONE && speed > -Constants.DrivebaseConstants.DEADZONE) ? ((speed > 0) ? Math.sqrt(speed) : -1 * Math.sqrt(Math.abs(speed))) : speed;
-    rotation = (rotation < Constants.DrivebaseConstants.DEADZONE && rotation > -Constants.DrivebaseConstants.DEADZONE) ? ((rotation > 0) ? Math.sqrt(rotation) : -1 * Math.sqrt(Math.abs(rotation))) : rotation;
+    speed = (sniperMode) ?  speed * SNIPER_SPEED : speed;
+    rotation = (sniperMode) ?  rotation * SNIPER_SPEED : rotation;
 
-    speed = (sniperMode) ?  speed * Constants.DrivebaseConstants.SNIPER_SPEED : speed;
     leftMotors.set(speed - rotation);
     rightMotors.set(speed + rotation);
+
+    robotDrive.feed();
   }
 
   /* Autonomous Getter / Setter Methods */
@@ -228,6 +240,26 @@ public class DriveSubsystem extends SubsystemBase {
       new PIDController(Constants.AutonoumousConstants.DRIVE_VELOCITY, 0, 0),
       this::setTankDriveVolts,
       this
+      )
+    );
+  }
+
+  /* Auto Engage */
+  public Command autoEngage(double setpoint) {
+    // Note: tune PIDs
+    int P = 1;
+    int I = 1;
+    int D = 1;
+    PIDController pid = new PIDController(P, I, D);
+    double pitch = navX.getPitch();
+    double speed = pid.calculate(pitch, setpoint);
+
+    return new SequentialCommandGroup(
+      new InstantCommand(
+        () -> {
+          leftMotors.set(speed);
+          rightMotors.set(speed);
+        }
       )
     );
   }

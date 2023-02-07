@@ -16,10 +16,10 @@ public final class Constants {
   }
 
   public static class DrivebaseConstants {
-    public static final int LF_MOTOR = 1;
-    public static final int LB_MOTOR = 2;
-    public static final int RF_MOTOR = 3;
-    public static final int RB_MOTOR = 4;
+    public static final int LF_MOTOR = 11;
+    public static final int LB_MOTOR = 12;
+    public static final int RF_MOTOR = 13;
+    public static final int RB_MOTOR = 14;
 
     public static final int CONTROLLER_PORT = 0;
 
