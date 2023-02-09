@@ -21,8 +21,12 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import frc.robot.Constants;
+import frc.robot.util.Logger;
 
 public class DriveSubsystem extends SubsystemBase {
 
@@ -47,6 +51,10 @@ public class DriveSubsystem extends SubsystemBase {
   private AHRS navX;
 
   private DifferentialDriveOdometry odometry;
+
+  Logger dataLogger;
+  Timer timer;
+  PowerDistribution PDH;
 
   public DriveSubsystem() {
     /* Robot Drive */
@@ -127,6 +135,11 @@ public class DriveSubsystem extends SubsystemBase {
     odometry = new DifferentialDriveOdometry(navX.getRotation2d(), leftEncoder.getPosition(), rightEncoder.getPosition());
 
     resetOdometry(getPose());
+
+    /* Logger */
+    dataLogger = new Logger();
+    timer = new Timer();
+    PDH = new PowerDistribution(1, ModuleType.kRev);
   }
 
   public void arcadeDrive(double speed, double rotation, boolean sniperMode) {
@@ -282,6 +295,17 @@ public class DriveSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("Gyro Heading: ", getGyroHeading());
     SmartDashboard.putNumber("Left Motor Temp: ", getLeftMotorTemp());
     SmartDashboard.putNumber("Right Motor Temp: ", getRightMotorTemp());
+
+    if (timer.get() == 1) {
+      timer.reset();
+      double velocity = (getRightEncoderVelocity() + getLeftEncoderVelocity()) / 2;
+      dataLogger.logTelemetryData(
+        getLeftMotorTemp(),
+        getRightMotorTemp(),
+        velocity,
+        PDH.getVoltage()
+        );
+    }
   }
 
   @Override
