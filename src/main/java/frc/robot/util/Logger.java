@@ -2,8 +2,6 @@
 package frc.robot.util;
 
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
 import java.io.File;
 import java.io.FileWriter;
 import java.time.LocalDateTime;
@@ -12,7 +10,7 @@ public class Logger {
     
     DateTimeFormatter DTF = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
     LocalDateTime time = LocalDateTime.now();
-    
+
     String name = DTF.format(time);
     String filepath = "Users/9105/Desktop/" + name + ".csv";
     String titles;

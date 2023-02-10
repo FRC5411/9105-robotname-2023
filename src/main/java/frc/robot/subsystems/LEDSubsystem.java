@@ -1,28 +1,82 @@
+/*
+ * TO-DO: Get num of LEDs and update constants
+ */
+
 package frc.robot.subsystems;
 
 import frc.robot.Constants;
-import edu.wpi.first.wpilibj.motorcontrol.Spark;
+import edu.wpi.first.wpilibj.AddressableLED;
+import edu.wpi.first.wpilibj.AddressableLEDBuffer;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class LEDSubsystem extends SubsystemBase {
-    Spark m_LEDMotor;
+
+    AddressableLED LED;
+    AddressableLEDBuffer LEDBuffer;
+
+    int rainbowFirstHue;
 
   public LEDSubsystem() {
-    m_LEDMotor = new Spark(Constants.LEDsConstants.LED_PORT);
+    LED = new AddressableLED(Constants.LEDsConstants.LED_PORT);
+    LEDBuffer = new AddressableLEDBuffer(Constants.LEDsConstants.LED_NUMBER);
+
+    LED.setLength(LEDBuffer.getLength());
+
+    LED.setData(LEDBuffer);
+    LED.start();
+
+    rainbowFirstHue = 1;
   }
   
-  public boolean exampleCondition() {
-    // Query some boolean state, such as a digital sensor.
-    return false;
+  public Command setBlue() {
+    return new SequentialCommandGroup(
+      new InstantCommand(() -> {
+          for (int i = 0; i < LEDBuffer.getLength(); i++) {
+            LEDBuffer.setRGB(i, 47, 194, 235);
+          }
+
+          LED.setData(LEDBuffer);
+        }
+      )
+    );
+  }
+
+  public Command setRed() {
+    return new SequentialCommandGroup(
+      new InstantCommand(() -> {
+          for (int i = 0; i < LEDBuffer.getLength(); i++) {
+            LEDBuffer.setRGB(i, 235, 47, 47);
+          }
+
+          LED.setData(LEDBuffer);
+        }
+      )
+    );
+  }
+  
+  public Command RGBMode() {
+    return new SequentialCommandGroup(
+      new InstantCommand(() -> {
+          for (int i = 0; i < LEDBuffer.getLength(); i++) {
+            final var hue = (rainbowFirstHue + (i * 180 / LEDBuffer.getLength())) % 180;
+
+            LEDBuffer.setHSV(i, hue, 255, 128);
+          }
+          rainbowFirstHue += 3;
+          rainbowFirstHue %= 180;
+
+          LED.setData(LEDBuffer);
+        }
+      )
+    );
   }
 
   @Override
-  public void periodic() {
-    // This method will be called once per scheduler run
-  }
+  public void periodic() {}
 
   @Override
-  public void simulationPeriodic() {
-    // This method will be called once per scheduler run during simulation
-  }
+  public void simulationPeriodic() {}
 }

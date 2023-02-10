@@ -139,7 +139,7 @@ public class DriveSubsystem extends SubsystemBase {
     /* Logger */
     dataLogger = new Logger();
     timer = new Timer();
-    PDH = new PowerDistribution(1, ModuleType.kRev);
+    PDH = new PowerDistribution(Constants.DrivebaseConstants.PDH_PORT, ModuleType.kRev);
   }
 
   public void arcadeDrive(double speed, double rotation, boolean sniperMode) {

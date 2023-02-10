@@ -24,12 +24,14 @@ public final class Constants {
     public static final int CONTROLLER_PORT = 0;
 
     public static final int MOTOR_AMP_LIMIT = 80;
+    public static final int PDH_PORT = 1;
     public static final double DEADZONE = 0.1;
     public static final double SNIPER_SPEED = 0.2;
   }
   
   public static class LEDsConstants {
     public static final int LED_PORT = 0;
+    public static final int LED_NUMBER = 60;
   }
 
   public static class AutonoumousConstants {
