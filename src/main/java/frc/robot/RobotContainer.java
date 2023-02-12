@@ -1,136 +1,100 @@
 //In Java We Trust
 
-//IMPORTANT NOTE: Comment out score sequential command initialisation and button config before deploying code
-
 package frc.robot;
 
-import java.io.IOException;
-import java.nio.file.FileSystem;
-import java.nio.file.Path;
+import com.pathplanner.lib.PathConstraints;
+import com.pathplanner.lib.PathPlanner;
+import com.pathplanner.lib.PathPlannerTrajectory;
 
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.RamseteController;
-import edu.wpi.first.math.controller.SimpleMotorFeedforward;
-import edu.wpi.first.math.trajectory.Trajectory;
-import edu.wpi.first.math.trajectory.TrajectoryUtil;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.Filesystem;
+import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.RamseteCommand;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.commands.ArcadeCommand;
-import frc.robot.commands.ReleaseCommand;
-import frc.robot.commands.ScoreLowCommand;
-import frc.robot.commands.ScoreMidCommand;
-import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
-import frc.robot.Constants.DriveConstants;
-import frc.robot.Constants.*;
-import edu.wpi.first.cameraserver.CameraServer;
-import edu.wpi.first.cscore.CvSink;
-import edu.wpi.first.cscore.CvSource;
+import frc.robot.subsystems.LEDSubsystem;
+import frc.robot.commands.ArcadeCommand;
 
-public class RobotContainer 
-{
+public class RobotContainer {
+
   private CommandXboxController controller;
 
   private DriveSubsystem robotDrive;
-  private ArmSubsystem intake;
-  
-  private SequentialCommandGroup scoreLow;
-  private SequentialCommandGroup scoreMedium;
+  private LEDSubsystem LEDs;
+  private boolean sniperMode;
 
-  private Trigger aButton;
-  private Trigger bButton;
-  private Trigger xButton;
+  private ArcadeCommand sniperCommand;
 
-  SendableChooser <Command> chooser;
+  Trigger LT;
+  Trigger xButton;
+  Trigger yButton;
 
-  public RobotContainer() 
-  {
-    controller = new CommandXboxController(Constants.DrivetrainConstants.controllerPort);
+  Debouncer debouncer;
+
+  SendableChooser <Command> autonChooser;
+
+  public RobotContainer() {
+    /* Default Drive & Controller */
+    controller = new CommandXboxController(Constants.DrivebaseConstants.CONTROLLER_PORT);
     robotDrive = new DriveSubsystem();
-    intake = new ArmSubsystem();
+    LEDs = new LEDSubsystem();
+    sniperMode = false;
 
-    aButton = controller.a();
-    bButton = controller.b();
+    LT = controller.leftTrigger(0.1);
     xButton = controller.x();
+    yButton = controller.y();
+
+    debouncer = new Debouncer(4);
 
     robotDrive.setDefaultCommand(new ArcadeCommand(
       () -> controller.getLeftY(), 
       () -> controller.getRightX(), 
+      sniperMode,
       robotDrive
       ));
-      
-    //scoreLow.addCommands(new ScoreLowCommand(intake, 1), new ReleaseCommand(intake));
-    //scoreMedium.addCommands(new ScoreMidCommand(intake, 1), new ReleaseCommand(intake));
 
-    chooser = new SendableChooser<>();
+    /* Sniper command */
+    if (debouncer.calculate(LT.getAsBoolean())) {
+      sniperCommand = new ArcadeCommand(
+        () -> controller.getLeftY(), 
+        () -> controller.getRightX(), 
+        !sniperMode, 
+        robotDrive);
+    }
 
-    //Adds button options
-    chooser.addOption("Test Path", loadPathPlannerTrajetoryToRamseteCommand(
-      "../../../deploy/pathplanner/generatedJSON/TestPath.wpilib.json",
+    /* Auton Button */
+    autonChooser = new SendableChooser<>();
+
+    PathConstraints trajectoryConstraints = new PathConstraints(Constants.AutonoumousConstants.DRIVE_VELOCITY, Constants.AutonoumousConstants.MAX_ACCELERATION);
+    PathPlannerTrajectory mainTrajectory = PathPlanner.loadPath("TestPath.wpilib.json" , trajectoryConstraints);
+
+
+    autonChooser.addOption("Test Path", robotDrive.followPath(
+      mainTrajectory,
      true));
 
-    Shuffleboard.getTab("Autonomous: ").add(chooser);
+    Shuffleboard.getTab("Autonomous: ").add(autonChooser);
 
-    //Camera stuff
-    CameraServer.startAutomaticCapture();
-
+    SmartDashboard.putNumber("Left Joystick Y: ", controller.getLeftY());
+    SmartDashboard.putNumber("Right Joystick X: ", controller.getRightX());
+    
     configureBindings();
   }
 
-  public Command loadPathPlannerTrajetoryToRamseteCommand(String filename, boolean resetOdometry)
-  {
-    Trajectory trajectory;
-    try {
-      Path trajectoryPath = Filesystem.getDeployDirectory().toPath().resolve(filename);
-      trajectory = TrajectoryUtil.fromPathweaverJson(trajectoryPath);
-    }catch(IOException exception){
-      DriverStation.reportError("Unable to open trajectory: " + filename, exception.getStackTrace());
-      System.out.println("Unable to read from file: " + filename);
+  private void configureBindings() {
+    
+    // NOTE: fix button bindings
+    LT.onTrue(sniperCommand);
 
-      //Returns this so robot doesnt do anything
-      return new InstantCommand();
-    }
-
-    RamseteCommand ramseteCommand = new RamseteCommand(
-      trajectory, 
-      robotDrive::getPose, 
-      new RamseteController(Constants.DriveConstants.kRamseteB, Constants.DriveConstants.kRamseteZeta), 
-      new SimpleMotorFeedforward(Constants.DriveConstants.ksVolts, Constants.DriveConstants.kvVoltSecondsPerMeter, Constants.DriveConstants.kaVoltSecondsSquaredPerMeter), 
-      Constants.DriveConstants.kDriveKinematics, 
-      robotDrive::getWheelSpeeds, 
-      new PIDController(Constants.DriveConstants.kPDriveVel, 0, 0), 
-      new PIDController(Constants.DriveConstants.kPDriveVel, 0, 0), 
-      robotDrive::setTankDriveVolts, 
-      robotDrive);
-
-    //Reset odometry first and then run command
-    if (resetOdometry) 
-    {
-      return new SequentialCommandGroup(
-        new InstantCommand(() -> robotDrive.resetOdometry(trajectory.getInitialPose())),ramseteCommand);
-    }
-    else 
-    {
-      return ramseteCommand;
-    }
+    /* LEDs */
+    //xButton.toggleOnTrue(new InstantCommand(LEDs::setBlue, LEDs));
+    //yButton.toggleOnTrue(new InstantCommand(LEDs::setRed, LEDs));
   }
 
-  private void configureBindings() 
-  {
-    //aButton.onTrue(scoreLow);
-    //bButton.onTrue(scoreMedium);
-  }
-
-  public Command getAutonomousCommand() 
-  {
+  public Command getAutonomousCommand() {
+    
     return null;
   }
 }
