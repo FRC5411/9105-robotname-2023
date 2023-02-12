@@ -27,6 +27,11 @@ public final class Constants {
     public static final int PDH_PORT = 1;
     public static final double DEADZONE = 0.1;
     public static final double SNIPER_SPEED = 0.2;
+
+    //TODO: GET CORRECT DISTANCE VALUES
+    public static final double LOW_SCORE_DISTANCE = 1;
+    public static final double MID_SCORE_DISTANCE = 1;
+    public static final double HIGH_SCORE_DISTANCE = 1;
   }
   
   public static class LEDsConstants {
@@ -67,4 +72,29 @@ public final class Constants {
     public static final int ARM_MOTOR_CURRENT_LIMIT = 60;
     public static final int GRABBER_MOTOR_CURRENT_LIMIT = 30;
   }
+
+  public static class ARM {       
+    public static final double LOW_CUBE_ANG = 45.4;
+    public static final double MID_CUBE_ANG = 106.6;
+    public static final double HIGH_CUBE_ANG = 130.6;
+    public static final double FETCH_CONE_ANG = 116.3;
+    public static final double LOW_CONE_ANG = 52.2;
+    public static final double MID_CONE_ANG = 93.5;
+    public static final double HIGH_CONE_ANG = 116.6;
+    public static final double FETCH_CUBE_ANG = 125.4;
+    public static final double FRONT = 90.3;
+    public static final double STRAIGHT = 180;
+    public static final double HOLD = 61.5;
+   }
+
+  public static class alliance{
+
+    // options are "blue" and "red"
+    public static final String teamColor = "blue".toLowerCase().strip();
+  }
+
+  public static final double BEAM_BALANACED_DRIVE_KP =   1;
+  public static final double BEAM_BALANCED_GOAL_DEGREES = 0;
+  public static final double BACKWARDS_BALANCING_EXTRA_POWER_MULTIPLIER = 1.35;
+  public static final double BEAM_BALANCED_ANGLE_TRESHOLD_DEGREES = 1;
 }

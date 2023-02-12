@@ -1,13 +1,9 @@
-
 package frc.robot.subsystems;
-
 import com.kauailabs.navx.frc.AHRS;
 import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.commands.PPRamseteCommand;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
-import com.revrobotics.CANSparkMax.IdleMode;
-
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.RamseteController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
@@ -26,8 +22,11 @@ import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import frc.robot.Constants;
+import frc.robot.Constants.AutonoumousConstants;
 import frc.robot.util.Logger;
+import frc.robot.Constants.DrivebaseConstants;
 
+/** Drive subsystem */
 public class DriveSubsystem extends SubsystemBase {
 
   private CANSparkMax leftFrontMotor;
@@ -35,8 +34,8 @@ public class DriveSubsystem extends SubsystemBase {
   private CANSparkMax rightFrontMotor;
   private CANSparkMax rightBackMotor;
 
-  private MotorControllerGroup leftMotors;
-  private MotorControllerGroup rightMotors;
+  // private MotorControllerGroup leftMotors;
+  // private MotorControllerGroup rightMotors;
 
   private DifferentialDrive robotDrive;
 
@@ -241,7 +240,7 @@ public class DriveSubsystem extends SubsystemBase {
     leftEncoder.setPosition(0);
   }
 
-  /* Auton Command */
+  /** Auton Command */
   public Command followPath(PathPlannerTrajectory trajectory, boolean resetOdometry) {
     return new SequentialCommandGroup(
       new InstantCommand(() -> {
@@ -307,7 +306,80 @@ public class DriveSubsystem extends SubsystemBase {
         );
     }
   }
+  /**
+  * Position robot for score type.
+  * @param ObjectType - The type of object: cone(true), cube(false)
+  * @param ScoreType - The type of score: low(0), mid(1), high(2)
+  * @param Target_X_Distance - X distance to limelight target
+  * @param Target_Y_Distance - Y distance to limelight target
+  * @author Cody Washington
+  */
+  public void position(boolean ObjectType, int ScoreType, double Target_X_Distance, double Target_Y_Distance)
+  {
+    ScoreType = (ScoreType > 2)? (2): (ScoreType);
+    toAngle((Math.atan(Target_Y_Distance/Target_X_Distance) > 0)? (90): (-90));
+    toDistance(((ObjectType && ((ScoreType == 1)? (true): (false)||(ScoreType == 2)? (true): (false)))? (Target_X_Distance-=18.5): (Target_X_Distance)));
+    toAngle((Math.atan(Target_Y_Distance/Target_X_Distance) > 0)? (-180): (180));
+    //Target type distance
+    switch(ScoreType)
+    {
+      //Low score distance
+      case 0:
+        toDistance(DrivebaseConstants.LOW_SCORE_DISTANCE);
+      //Mid score distance
+      case 1:
+        toDistance(DrivebaseConstants.MID_SCORE_DISTANCE);
+      //High score distance
+      case 2:
+        toDistance(DrivebaseConstants.HIGH_SCORE_DISTANCE);
+    }
+  } 
 
+  /**
+  * Position robot to new angle
+  * @param Angle - New angle to reach.
+  * @author Cody Washington
+  */
+  public void toAngle(double Angle)
+  {
+    Angle = (int)Math.round(Angle);
+    double StartingYaw = (int)Math.round(navX.getAngle());
+    while(Math.round(navX.getAngle()) != (StartingYaw + Angle))
+    {
+      //Positive turn
+      if(Math.round(navX.getAngle()) < (StartingYaw + Angle))
+        arcadeDrive(0.0,((navX.getAngle() - Angle)/(StartingYaw + Angle)), false);
+      //Negative turn
+      else
+        arcadeDrive(0.0,(-(navX.getAngle() - Angle)/(StartingYaw + Angle)), false);
+    }
+  }
+
+
+
+
+  /**
+  * Position robot to new distance
+  * @param Distance - Distance to move forwards
+  * @author Cody Washington
+  */
+  public void toDistance(double Distance)
+  {
+    while(Math.round(Distance) != Math.round(AutonoumousConstants.LINEAR_DIST_CONVERSION_FACTOR / rightBackMotor.getEncoder().getVelocity()))
+    {
+      //Positive translation
+      if(Math.round(Distance) < Math.round(AutonoumousConstants.LINEAR_DIST_CONVERSION_FACTOR / rightBackMotor.getEncoder().getVelocity()))
+        arcadeDrive(Math.round((AutonoumousConstants.LINEAR_DIST_CONVERSION_FACTOR / rightBackMotor.getEncoder().getVelocity())/Distance),0.0,false);
+      //Negative translation
+      else
+        arcadeDrive(-Math.round((AutonoumousConstants.LINEAR_DIST_CONVERSION_FACTOR / rightBackMotor.getEncoder().getVelocity())/Distance), 0.0, false);
+    }
+  }
+
+  public void stop() {
+    arcadeDrive(0, 0, false);
+  }
+  
   @Override
   public void simulationPeriodic() {}
 }
