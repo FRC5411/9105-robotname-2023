@@ -1,4 +1,6 @@
+
 package frc.robot.subsystems;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -8,6 +10,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 // Test code to change between pipelines on limelight
 public class LimelightSubsystem extends SubsystemBase {
+
   private NetworkTable limelight;
   private boolean pipelineIndex;
   private double[] posevalues;
@@ -66,6 +69,4 @@ public class LimelightSubsystem extends SubsystemBase {
     frc.lib.Telemetry.setValue("Limelight/Odometry/Rotation", getPose().getRotation().getDegrees());
   */
   }
-
-
 }

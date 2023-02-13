@@ -16,19 +16,22 @@ public final class Constants {
   }
 
   public static class DrivebaseConstants {
-    public static final int LF_MOTOR = 11;
-    public static final int LB_MOTOR = 12;
-    public static final int RF_MOTOR = 13;
-    public static final int RB_MOTOR = 14;
+    public static final int LF_MOTOR_CANID = 11;
+    public static final int LB_MOTOR_CANID = 12;
+    public static final int RF_MOTOR_CANID = 13;
+    public static final int RB_MOTOR_CANID = 14;
 
     public static final int CONTROLLER_PORT = 0;
 
     public static final int MOTOR_AMP_LIMIT = 80;
-    public static final int PDH_PORT = 1;
+    public static final int PDH_PORT_CANID = 1;
+
     public static final double DEADZONE = 0.1;
     public static final double SNIPER_SPEED = 0.2;
+    public static final double SPEED_REDUCTION = 0.95;
+    public static final double ROTATION_REDUCTION = 0.4;
 
-    //TODO: GET CORRECT DISTANCE VALUES
+    // TO-DO: GET CORRECT DISTANCE VALUES
     public static final double LOW_SCORE_DISTANCE = 1;
     public static final double MID_SCORE_DISTANCE = 1;
     public static final double HIGH_SCORE_DISTANCE = 1;
@@ -65,32 +68,31 @@ public final class Constants {
       (convertToLinDist(GEAR_RATIO, WHEEL_RADIUS)); // Converts ticks to metres
   }
 
-  public static class IntakeConstants {
-    public static final int ARM_MOTOR = 5;
-    public static final int GRABBER_MOTOR = 6;
+  public static class ArmConstants { 
+    public static final int ARM_MOTOR_CANID = 21;
+    public static final int GRABBER_MOTOR_CANID = 22;
 
     public static final int ARM_MOTOR_CURRENT_LIMIT = 60;
     public static final int GRABBER_MOTOR_CURRENT_LIMIT = 30;
-  }
 
-  public static class ARM {       
     public static final double LOW_CUBE_ANG = 45.4;
     public static final double MID_CUBE_ANG = 106.6;
     public static final double HIGH_CUBE_ANG = 130.6;
-    public static final double FETCH_CONE_ANG = 116.3;
+
     public static final double LOW_CONE_ANG = 52.2;
     public static final double MID_CONE_ANG = 93.5;
     public static final double HIGH_CONE_ANG = 116.6;
+
     public static final double FETCH_CUBE_ANG = 125.4;
+    public static final double FETCH_CONE_ANG = 116.3;
+
     public static final double FRONT = 90.3;
     public static final double STRAIGHT = 180;
     public static final double HOLD = 61.5;
    }
 
-  public static class alliance{
-
-    // options are "blue" and "red"
-    public static final String teamColor = "blue".toLowerCase().strip();
+  public static class Alliance {
+    public static final String TEAM_COLOR = "blue".toLowerCase().strip();
   }
 
   public static final double BEAM_BALANACED_DRIVE_KP =   1;

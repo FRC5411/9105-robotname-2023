@@ -5,17 +5,17 @@
     "extensions": [
       {
         "name": "Sim DriverStation",
-        "libName": "/Users/k2so/Documents/GitHub/9105-robotname-2023/build/jni/release/libhalsim_ds_socket.dylib",
+        "libName": "/Users/k2so/Desktop/Mantle/9105-robotname-2023/build/jni/release/libhalsim_ds_socket.dylib",
         "defaultEnabled": false
       },
       {
         "name": "Sim GUI",
-        "libName": "/Users/k2so/Documents/GitHub/9105-robotname-2023/build/jni/release/libhalsim_gui.dylib",
+        "libName": "/Users/k2so/Desktop/Mantle/9105-robotname-2023/build/jni/release/libhalsim_gui.dylib",
         "defaultEnabled": true
       }
     ],
     "environment": {},
-    "libraryDir": "/Users/k2so/Documents/GitHub/9105-robotname-2023/build/jni/release",
+    "libraryDir": "/Users/k2so/Desktop/Mantle/9105-robotname-2023/build/jni/release",
     "mainClassName": "frc.robot.Main"
   }
 ]

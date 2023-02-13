@@ -1,3 +1,4 @@
+
 package frc.robot.commands;
 
 import frc.robot.Constants;
@@ -9,8 +10,8 @@ import com.kauailabs.navx.frc.AHRS;
 // This command self=balances on the charging station using gyroscope pitch as feedback
 public class AutoEngageCommand extends CommandBase {
 
-  private DriveSubsystem m_DriveSubsystem;
-  private AHRS m_navX;
+  private DriveSubsystem robotDrive;
+  private AHRS navX;
 
   private double errorPitch;
   private double errorYaw;
@@ -21,8 +22,8 @@ public class AutoEngageCommand extends CommandBase {
 
   /** Command to use Gyro data to resist the tip angle from the beam - to stabalize and balanace */
   public AutoEngageCommand(DriveSubsystem parameterSubsystem, AHRS parameternavX) {
-    this.m_DriveSubsystem = parameterSubsystem;
-    this.m_navX = parameternavX;
+    this.robotDrive = parameterSubsystem;
+    this.navX = parameternavX;
     addRequirements(parameterSubsystem);
   }
 
@@ -35,8 +36,8 @@ public class AutoEngageCommand extends CommandBase {
   public void execute() {
     // Uncomment the line below this to simulate the gyroscope axis with a controller joystick
     // Double currentAngle = -1 * Robot.controller.getRawAxis(Constants.LEFT_VERTICAL_JOYSTICK_AXIS) * 45;
-    this.currentAnglePitch = m_navX.getPitch();
-    this.currentAngleYaw = m_navX.getYaw(); 
+    this.currentAnglePitch = navX.getPitch();
+    this.currentAngleYaw = navX.getYaw(); 
 
     errorPitch = Constants.BEAM_BALANCED_GOAL_DEGREES - currentAnglePitch;
     errorYaw = Constants.BEAM_BALANCED_GOAL_DEGREES - currentAngleYaw;
@@ -60,7 +61,7 @@ public class AutoEngageCommand extends CommandBase {
       drivePowerYaw = Math.copySign(0.4, drivePowerYaw);
     }
 
-    m_DriveSubsystem.arcadeDrive(drivePowerPitch, currentAngleYaw, true);
+    robotDrive.arcadeDrive(drivePowerPitch, currentAngleYaw, true);
     
     // Debugging Print Statments
     System.out.println("Current Angle: " + currentAngleYaw);
@@ -74,7 +75,7 @@ public class AutoEngageCommand extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_DriveSubsystem.stop();
+    robotDrive.stop();
   }
 
   // Returns true when the command should end.

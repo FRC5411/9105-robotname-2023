@@ -8,15 +8,15 @@ import java.time.LocalDateTime;
 
 public class Logger {
     
-    DateTimeFormatter DTF = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
-    LocalDateTime time = LocalDateTime.now();
+    private DateTimeFormatter DTF = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+    private LocalDateTime time = LocalDateTime.now();
 
-    String name = DTF.format(time);
-    String filepath = "Users/9105/Desktop/" + name + ".csv";
-    String titles;
+    private String name = DTF.format(time);
+    private String filepath = "/U/logs/" + name + ".csv";
+    private String titles;
 
-    File file;
-    FileWriter writer;
+    private File file;
+    private FileWriter writer;
     
     public Logger() {
         try {

@@ -1,4 +1,6 @@
+
 package frc.robot.subsystems;
+
 import com.kauailabs.navx.frc.AHRS;
 import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.commands.PPRamseteCommand;
@@ -20,119 +22,68 @@ import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
-import frc.robot.Constants;
 import frc.robot.Constants.*;
 import frc.robot.util.Logger;
 
-
-/** Drive subsystem */
 public class DriveSubsystem extends SubsystemBase {
-
 
   private CANSparkMax leftFrontMotor;
   private CANSparkMax leftBackMotor;
   private CANSparkMax rightFrontMotor;
   private CANSparkMax rightBackMotor;
 
-  // private MotorControllerGroup leftMotors;
-  // private MotorControllerGroup rightMotors;
-
   private DifferentialDrive robotDrive;
-  private LimelightSubsystem m_vision;
+  private LimelightSubsystem vision;
 
   private RelativeEncoder leftEncoder;
   private RelativeEncoder rightEncoder;
-
-  private double DEADZONE_VAL;
-  private double SNIPER_SPEED;
-  private double SPEED;
-  private double ROTATION;
-  private Pose2d initial_pose;
+  
+  private Pose2d initialPose;
 
   private AHRS navX;
 
   private DifferentialDrivePoseEstimator odometry;
 
-//  Logger dataLogger;
-  Timer timer;
-  PowerDistribution PDH;
+  private Timer timer;
+  private Logger dataLogger;
+  private PowerDistribution PDH;
 
   public DriveSubsystem(LimelightSubsystem vision) {
-    /* Robot Drive */
     leftFrontMotor = new CANSparkMax(
-      DrivebaseConstants.LF_MOTOR,
+      DrivebaseConstants.LF_MOTOR_CANID,
       CANSparkMax.MotorType.kBrushless
     );
 
     leftBackMotor = new CANSparkMax(
-      DrivebaseConstants.LB_MOTOR,
+      DrivebaseConstants.LB_MOTOR_CANID,
       CANSparkMax.MotorType.kBrushless
     );
    
     rightFrontMotor = new CANSparkMax(
-      DrivebaseConstants.RF_MOTOR,
+      DrivebaseConstants.RF_MOTOR_CANID,
       CANSparkMax.MotorType.kBrushless
     );
    
     rightBackMotor = new CANSparkMax(
-      DrivebaseConstants.RB_MOTOR,
+      DrivebaseConstants.RB_MOTOR_CANID,
       CANSparkMax.MotorType.kBrushless
     );
 
-
-    m_vision = vision;
-
-
-    /*
-    leftFrontMotor.setIdleMode(IdleMode.kBrake);
-    leftBackMotor.setIdleMode(IdleMode.kBrake);
-    rightFrontMotor.setIdleMode(IdleMode.kBrake);
-    rightBackMotor.setIdleMode(IdleMode.kBrake);
-
-
-    leftBackMotor.follow(leftFrontMotor);
-    rightBackMotor.follow(rightFrontMotor);
-
-
-    leftMotors = new MotorControllerGroup(leftFrontMotor, leftBackMotor);
-    rightMotors = new MotorControllerGroup(rightFrontMotor, rightBackMotor);
-
-
-    leftMotors.setInverted(true);
-     
-    leftFrontMotor.setSmartCurrentLimit(Constants.DrivebaseConstants.MOTOR_AMP_LIMIT);
-    leftBackMotor.setSmartCurrentLimit(Constants.DrivebaseConstants.MOTOR_AMP_LIMIT);
-    rightFrontMotor.setSmartCurrentLimit(Constants.DrivebaseConstants.MOTOR_AMP_LIMIT);
-    rightBackMotor.setSmartCurrentLimit(Constants.DrivebaseConstants.MOTOR_AMP_LIMIT);
-    */
-
-
-    initial_pose = new Pose2d();
-
+    this.vision = vision;
+    initialPose = new Pose2d();
 
     robotDrive = new DifferentialDrive(leftFrontMotor, rightFrontMotor);
 
-
-    DEADZONE_VAL = DrivebaseConstants.DEADZONE;
-    SNIPER_SPEED = DrivebaseConstants.SNIPER_SPEED;
-    SPEED = 0.95;
-    ROTATION = 0.4;
-
-
-    /* Encoders */
     leftEncoder = leftFrontMotor.getEncoder();
     rightEncoder = rightFrontMotor.getEncoder();
-
 
     leftEncoder.setPositionConversionFactor(
       AutonoumousConstants.LINEAR_DIST_CONVERSION_FACTOR
     );
 
-
     rightEncoder.setPositionConversionFactor(
       AutonoumousConstants.LINEAR_DIST_CONVERSION_FACTOR
     );
-
 
     leftEncoder.setVelocityConversionFactor(
       AutonoumousConstants.LINEAR_DIST_CONVERSION_FACTOR / 60
@@ -142,38 +93,27 @@ public class DriveSubsystem extends SubsystemBase {
       AutonoumousConstants.LINEAR_DIST_CONVERSION_FACTOR / 60
     );
 
-
     resetEncoders();
 
-
-    /* Gyro */
     navX = new AHRS(SPI.Port.kMXP);
     zeroHeading();
 
-
-    /* Odometry */
-    odometry = new DifferentialDrivePoseEstimator(AutonoumousConstants.DRIVE_KINEMATICS, navX.getRotation2d(), leftEncoder.getPosition(), rightEncoder.getPosition(), initial_pose);
-
+    odometry = new DifferentialDrivePoseEstimator(
+      AutonoumousConstants.DRIVE_KINEMATICS, 
+      navX.getRotation2d(), 
+      leftEncoder.getPosition(), 
+      rightEncoder.getPosition(), 
+      initialPose);
 
     resetOdometry(getPose());
 
-
-    /* Logger */
-//    dataLogger = new Logger();
+    dataLogger = new Logger();
     timer = new Timer();
-    PDH = new PowerDistribution(Constants.DrivebaseConstants.PDH_PORT, ModuleType.kRev);
+    PDH = new PowerDistribution(DrivebaseConstants.PDH_PORT_CANID, ModuleType.kRev);
   }
 
-
   public void arcadeDrive(double speed, double rotation, boolean sniperMode) {
-    //speed = (speed < 0.1 && speed > -0.1) ? 0 : speed * 0.7; // Also reduces the speed to 70%
-    //rotation = (rotation < 0.1 && rotation > -0.1) ? 0 : rotation;
-
-
-    //speed = (speed < Constants.DrivebaseConstants.DEADZONE && speed > -Constants.DrivebaseConstants.DEADZONE) ? ((speed > 0) ? Math.sqrt(speed) : -1 * Math.sqrt(Math.abs(speed))) : speed;
-    //rotation = (rotation < Constants.DrivebaseConstants.DEADZONE && rotation > -Constants.DrivebaseConstants.DEADZONE) ? ((rotation > 0) ? Math.sqrt(rotation) : -1 * Math.sqrt(Math.abs(rotation))) : rotation;
-   
-    if (speed < DEADZONE_VAL && speed > -DEADZONE_VAL) {
+    if (speed < DrivebaseConstants.DEADZONE && speed > -DrivebaseConstants.DEADZONE) {
       if (speed > 0) {
         speed = Math.sqrt(speed);
       }
@@ -182,8 +122,7 @@ public class DriveSubsystem extends SubsystemBase {
       }
     }
 
-
-    if (rotation < DEADZONE_VAL && rotation > -DEADZONE_VAL) {
+    if (rotation < DrivebaseConstants.DEADZONE && rotation > -DrivebaseConstants.DEADZONE) {
       if (rotation > 0) {
         rotation = Math.sqrt(rotation);
       }
@@ -192,68 +131,47 @@ public class DriveSubsystem extends SubsystemBase {
       }
     }
 
+    speed = (sniperMode) ?  speed * DrivebaseConstants.SNIPER_SPEED : speed * DrivebaseConstants.SPEED_REDUCTION;
+    rotation = (sniperMode) ?  rotation * DrivebaseConstants.SNIPER_SPEED : rotation * DrivebaseConstants.ROTATION_REDUCTION;
 
-    speed = (sniperMode) ?  speed * SNIPER_SPEED : speed * SPEED;
-    rotation = (sniperMode) ?  rotation * SNIPER_SPEED : rotation * ROTATION;
-
-
-    /*
-    leftMotors.set(speed - rotation);
-    rightMotors.set(speed + rotation);
-
-
-    robotDrive.feed();*/
     robotDrive.arcadeDrive(speed, rotation);
   }
-
-
-  /* Autonomous Getter / Setter Methods */
-
 
   public double getLeftEncoderPosition() {
     return -leftEncoder.getPosition();
   }
 
-
   public double getRightEncoderPosition() {
     return rightEncoder.getPosition();
   }
-
 
   public double getLeftEncoderVelocity() {
     return -leftEncoder.getVelocity();
   }
 
-
   public double getRightEncoderVelocity() {
     return rightEncoder.getVelocity();
   }
-
 
   public double getGyroHeading() {
     return navX.getRotation2d().getDegrees(); //Make sure it's in degrees
   }
 
-
   public Pose2d getPose() {
     return odometry.getEstimatedPosition();
   }
-
 
   public DifferentialDriveWheelSpeeds getWheelSpeeds() {
     return new DifferentialDriveWheelSpeeds(getLeftEncoderVelocity(), getRightEncoderVelocity());
   }
 
-
   public double getLeftMotorTemp() {
     return leftFrontMotor.getMotorTemperature();
   }
 
-
   public double getRightMotorTemp() {
     return rightFrontMotor.getMotorTemperature();
   }
-
 
   public void setTankDriveVolts(double leftVolts, double rightVolts) {
     leftFrontMotor.setVoltage(leftVolts);
@@ -261,31 +179,25 @@ public class DriveSubsystem extends SubsystemBase {
     robotDrive.feed();
   }
 
-
   public void setMaxOutput(double maxOutput) {
     robotDrive.setMaxOutput(maxOutput);
   }
-
 
   public void zeroHeading() {
     navX.calibrate();
     navX.reset();
   }
 
-
   public void resetOdometry(Pose2d pose) {
     resetEncoders();
     odometry.resetPosition(navX.getRotation2d(), getLeftEncoderPosition(), getGyroHeading(), pose);
   }
-
 
   public void resetEncoders() {
     rightEncoder.setPosition(0);
     leftEncoder.setPosition(0);
   }
 
-
-  /** Auton Command */
   public Command followPath(PathPlannerTrajectory trajectory, boolean resetOdometry) {
     return new SequentialCommandGroup(
       new InstantCommand(() -> {
@@ -309,35 +221,14 @@ public class DriveSubsystem extends SubsystemBase {
     );
   }
 
-
-  /* Auto Engage */
-  public Command autoEngage(double setpoint) {
-    // Note: tune PIDs
-    int P = 1;
-    int I = 1;
-    int D = 1;
-    PIDController pid = new PIDController(P, I, D);
-    double pitch = navX.getPitch();
-    double speed = pid.calculate(pitch, setpoint);
-
-
-    return new SequentialCommandGroup(
-      new InstantCommand(
-        () -> {
-          leftFrontMotor.set(speed);
-          rightFrontMotor.set(speed);
-        }
-      )
-    );
-  }
-
-
-  /* Dashboard Display */
   @Override
   public void periodic() {
-    if(m_vision.hastarget()) {odometry.addVisionMeasurement(m_vision.getPose(), Timer.getFPGATimestamp());}
-    odometry.update(navX.getRotation2d(), leftEncoder.getPosition(), rightEncoder.getPosition());
+    if (vision.hastarget()) {
+      odometry.addVisionMeasurement(vision.getPose(), 
+      Timer.getFPGATimestamp());
+    }
 
+    odometry.update(navX.getRotation2d(), leftEncoder.getPosition(), rightEncoder.getPosition());
 
     SmartDashboard.putNumber("Left Encoder Val: ", getLeftEncoderPosition());
     SmartDashboard.putNumber("Right Encoder Val: ", getRightEncoderPosition());
@@ -345,18 +236,19 @@ public class DriveSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("Left Motor Temp: ", getLeftMotorTemp());
     SmartDashboard.putNumber("Right Motor Temp: ", getRightMotorTemp());
 
-
     if (timer.get() == 1) {
       timer.reset();
       double velocity = (getRightEncoderVelocity() + getLeftEncoderVelocity()) / 2;
-/*      dataLogger.logTelemetryData(
+
+      dataLogger.logTelemetryData(
         getLeftMotorTemp(),
         getRightMotorTemp(),
         velocity,
         PDH.getVoltage()
-        ); */
+        ); 
     }
   }
+
   /**
   * Position robot for score type.
   * @param ObjectType - The type of object: cone(true), cube(false)
@@ -386,7 +278,6 @@ public class DriveSubsystem extends SubsystemBase {
     }
   }
 
-
   /**
   * Position robot to new angle
   * @param Angle - New angle to reach.
@@ -412,7 +303,7 @@ public class DriveSubsystem extends SubsystemBase {
   * @param Distance - Distance to move forwards
   * @author Cody Washington
   */
-  public void toDistance(double Distance)
+  public void toDistance(double Distance) 
   {
     while(Math.round(Distance) != Math.round(AutonoumousConstants.LINEAR_DIST_CONVERSION_FACTOR / rightBackMotor.getEncoder().getVelocity()))
     {
@@ -424,7 +315,6 @@ public class DriveSubsystem extends SubsystemBase {
         arcadeDrive(-Math.round((AutonoumousConstants.LINEAR_DIST_CONVERSION_FACTOR / rightBackMotor.getEncoder().getVelocity())/Distance), 0.0, false);
     }
   }
-
 
   public void stop() {
     arcadeDrive(0, 0, false);

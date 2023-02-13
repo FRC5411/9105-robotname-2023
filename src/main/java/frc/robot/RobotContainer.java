@@ -1,12 +1,7 @@
 //In Java We Trust
 
-
-/*
- * Note: Fix path planner loading path
- */
-
-
  package frc.robot;
+
  import com.pathplanner.lib.PathConstraints;
  import com.pathplanner.lib.PathPlanner;
  import com.pathplanner.lib.PathPlannerTrajectory;
@@ -24,50 +19,39 @@
  import frc.robot.commands.ArcadeCommand;
  // import frc.robot.subsystems.LimelightSubsystem;
  
- 
  public class RobotContainer {
  
- 
    private CommandXboxController controller;
- 
- 
+
    private DriveSubsystem robotDrive;
    private LEDSubsystem LEDs;
    private LimelightSubsystem Limelight;
    private boolean sniperMode;
  
- 
    private ArcadeCommand sniperCommand;
- 
  
    Trigger LT;
    Trigger xButton;
    Trigger yButton;
  
- 
    Debouncer debouncer;
- 
  
    SendableChooser <Command> autonChooser;
  
- 
    public RobotContainer() {
-     /* Default Drive & Controller */
      controller = new CommandXboxController(Constants.DrivebaseConstants.CONTROLLER_PORT);
      Limelight = new LimelightSubsystem();
      robotDrive = new DriveSubsystem(Limelight);
+
      // Limelight = new LimelightSubsystem();
      LEDs = new LEDSubsystem();
      sniperMode = false;
- 
  
      LT = controller.leftTrigger(0.1);
      xButton = controller.x();
      yButton = controller.y();
  
- 
      debouncer = new Debouncer(4);
- 
  
      robotDrive.setDefaultCommand(new ArcadeCommand(
        () -> controller.getLeftY(),
@@ -76,8 +60,6 @@
        robotDrive
        ));
  
- 
-     /* Sniper command */
      if (debouncer.calculate(LT.getAsBoolean())) {
        sniperCommand = new ArcadeCommand(
          () -> controller.getLeftY(),
@@ -86,23 +68,15 @@
          robotDrive);
      }
  
- 
-     /* Auton Button */
      autonChooser = new SendableChooser<>();
- 
- 
      PathConstraints trajectoryConstraints = new PathConstraints(Constants.AutonoumousConstants.DRIVE_VELOCITY, Constants.AutonoumousConstants.MAX_ACCELERATION);
-     /*"/Users/k2so/Documents/GitHub/9105-robotname-2023/src/main/deploy/pathplanner/generatedJSON/TestPath.wpilib.json" */
      PathPlannerTrajectory mainTrajectory = PathPlanner.loadPath("TestPath.wpilib.json" , trajectoryConstraints);
- 
  
      autonChooser.addOption("Test Path", robotDrive.followPath(
        mainTrajectory,
       true));
  
- 
      Shuffleboard.getTab("Autonomous: ").add(autonChooser);
- 
  
      SmartDashboard.putNumber("Left Joystick Y: ", controller.getLeftY());
      SmartDashboard.putNumber("Right Joystick X: ", controller.getRightX());
@@ -110,15 +84,12 @@
      configureBindings();
    }
  
- 
    private void configureBindings() {
- /*    LT.toggleOnTrue(sniperCommand);
+     //LT.onTrue(sniperCommand);
  
- 
-     xButton.toggleOnTrue(new InstantCommand(LEDs::setBlue, LEDs));
-     yButton.toggleOnTrue(new InstantCommand(LEDs::setRed, LEDs)); */
+     //xButton.toggleOnTrue(new InstantCommand(LEDs::setBlue, LEDs));
+     //yButton.toggleOnTrue(new InstantCommand(LEDs::setRed, LEDs)); 
    }
- 
  
    public Command getAutonomousCommand() {
     

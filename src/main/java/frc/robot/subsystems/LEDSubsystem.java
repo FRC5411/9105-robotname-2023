@@ -14,10 +14,10 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class LEDSubsystem extends SubsystemBase {
 
-    AddressableLED LED;
-    AddressableLEDBuffer LEDBuffer;
+    private AddressableLED LED;
+    private AddressableLEDBuffer LEDBuffer;
 
-    int rainbowFirstHue;
+    private int rainbowFirstHue;
 
   public LEDSubsystem() {
     LED = new AddressableLED(Constants.LEDsConstants.LED_PORT);
