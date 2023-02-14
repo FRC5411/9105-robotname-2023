@@ -93,6 +93,7 @@ public class DriveSubsystem extends SubsystemBase {
       AutonoumousConstants.LINEAR_DIST_CONVERSION_FACTOR / 60
     );
 
+    leftFrontMotor.setInverted(true);
     resetEncoders();
 
     navX = new AHRS(SPI.Port.kMXP);
