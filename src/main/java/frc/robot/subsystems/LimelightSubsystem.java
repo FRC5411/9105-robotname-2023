@@ -7,6 +7,7 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.Limelight;
 
 // Test code to change between pipelines on limelight
 public class LimelightSubsystem extends SubsystemBase {
@@ -36,7 +37,7 @@ public class LimelightSubsystem extends SubsystemBase {
     return true;
   }
 
-  public double getyaw() {
+  public double getYaw() {
     return limelight.getEntry("tx").getDouble(0);
   }
 
@@ -46,6 +47,10 @@ public class LimelightSubsystem extends SubsystemBase {
 
   public double getArea() {
     return limelight.getEntry("ta").getDouble(0);
+  }
+
+  public double getDistance(){
+    return (getArea())/(Limelight.SLOPE);
   }
 
   public Pose2d getPose() {
