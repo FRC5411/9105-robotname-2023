@@ -17,9 +17,8 @@
  import edu.wpi.first.wpilibj2.command.InstantCommand;
  import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
  import edu.wpi.first.wpilibj2.command.button.Trigger;
- import frc.robot.subsystems.DriveSubsystem;
- import frc.robot.subsystems.LEDSubsystem;
- import frc.robot.subsystems.LimelightSubsystem;
+ import frc.robot.subsystems.*;
+ import edu.wpi.first.wpilibj2.command.Commands;
  import frc.robot.commands.ArcadeCommand;
  // import frc.robot.subsystems.LimelightSubsystem;
  
@@ -35,6 +34,7 @@
    private ArcadeCommand sniperCommand;
  
    Trigger LT;
+   Trigger aButton;
    Trigger xButton;
    Trigger yButton;
  
@@ -52,6 +52,7 @@
      sniperMode = false;
  
      LT = controller.leftTrigger(0.1);
+     aButton = controller.a();
      xButton = controller.x();
      yButton = controller.y();
  
@@ -90,9 +91,13 @@
  
    private void configureBindings() {
      //LT.onTrue(sniperCommand);
- 
+
      //xButton.toggleOnTrue(new InstantCommand(LEDs::setBlue, LEDs));
      //yButton.toggleOnTrue(new InstantCommand(LEDs::setRed, LEDs)); 
+
+     //TODO: APRIlTAG AUTO-ALIGNMENT CODE
+     aButton.whileTrue(new InstantCommand(() -> robotDrive.autoAlignment(false, 0, Limelight.getYaw(),Limelight.getDistance()), robotDrive));
+
    }
  
    public Command getAutonomousCommand() {

@@ -68,6 +68,10 @@ public final class Constants {
       (convertToLinDist(GEAR_RATIO, WHEEL_RADIUS)); // Converts ticks to metres
   }
 
+  public static class Limelight{
+    public static final double SLOPE = 1;
+  }
+
   public static class ArmConstants { 
     public static final int ARM_MOTOR_CANID = 21;
     public static final int GRABBER_MOTOR_CANID = 22;

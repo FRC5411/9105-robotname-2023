@@ -252,18 +252,20 @@ public class DriveSubsystem extends SubsystemBase {
 
   /**
   * Position robot for score type.
-  * @param ObjectType - The type of object: cone(true), cube(false)
+  * @param HeldObjectType - The type of object: cone(true), cube(false)
   * @param ScoreType - The type of score: low(0), mid(1), high(2)
-  * @param Target_X_Distance - X distance to limelight target
-  * @param Target_Y_Distance - Y distance to limelight target
+  * @param Yaw - Angle to target
+  * @param TargetDistance - Magnitude to target
   * @author Cody Washington
   */
-  public void position(boolean ObjectType, int ScoreType, double Target_X_Distance, double Target_Y_Distance)
+  public void autoAlignment(boolean HeldObjectType, int ScoreType, double TargetAngle, double TargetDistance)
   {
+    double Target_X_Distance = (Math.sin(TargetAngle) * TargetDistance);
+    double Target_Z_Distance = (Math.cos(TargetAngle) * TargetDistance);
     ScoreType = (ScoreType > 2)? (2): (ScoreType);
-    toAngle((Math.atan(Target_Y_Distance/Target_X_Distance) > 0)? (90): (-90));
-    toDistance(((ObjectType && ((ScoreType == 1)? (true): (false)||(ScoreType == 2)? (true): (false)))? (Target_X_Distance-=18.5): (Target_X_Distance)));
-    toAngle((Math.atan(Target_Y_Distance/Target_X_Distance) > 0)? (-180): (180));
+    toAngle((Math.atan(Target_Z_Distance/Target_X_Distance) > 0)? (90): (-90));
+    toDistance(((HeldObjectType && ((ScoreType == 1)? (true): (false)||(ScoreType == 2)? (true): (false)))? (Target_X_Distance-=18.5): (Target_X_Distance)));
+    toAngle((Math.atan(Target_Z_Distance/Target_X_Distance) > 0)? (-180): (180));
     //Target type distance
     switch(ScoreType)
     {
