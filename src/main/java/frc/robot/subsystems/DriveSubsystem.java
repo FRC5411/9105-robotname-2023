@@ -308,14 +308,16 @@ public class DriveSubsystem extends SubsystemBase {
   */
   public void toDistance(double Distance) 
   {
-    while(Math.round(Distance) != Math.round(AutonoumousConstants.LINEAR_DIST_CONVERSION_FACTOR / rightBackMotor.getEncoder().getVelocity()))
+    double time = Timer.getFPGATimestamp();
+    while(Math.round(Distance) != Math.round(rightBackMotor.getEncoder().getVelocity() * time))
     {
+      time = Timer.getFPGATimestamp();
       //Positive translation
-      if(Math.round(Distance) < Math.round(AutonoumousConstants.LINEAR_DIST_CONVERSION_FACTOR / rightBackMotor.getEncoder().getVelocity()))
-        arcadeDrive(Math.round((AutonoumousConstants.LINEAR_DIST_CONVERSION_FACTOR / rightBackMotor.getEncoder().getVelocity())/Distance),0.0,false);
+      if(Math.round(Distance) < Math.round(rightBackMotor.getEncoder().getVelocity() * time))
+        arcadeDrive(Math.round((rightBackMotor.getEncoder().getPosition() / rightBackMotor.getEncoder().getCountsPerRevolution())),0.0,false);
       //Negative translation
       else
-        arcadeDrive(-Math.round((AutonoumousConstants.LINEAR_DIST_CONVERSION_FACTOR / rightBackMotor.getEncoder().getVelocity())/Distance), 0.0, false);
+        arcadeDrive(-Math.round((rightBackMotor.getEncoder().getPosition() / rightBackMotor.getEncoder().getCountsPerRevolution())), 0.0, false);
     }
   }
 
