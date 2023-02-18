@@ -22,6 +22,7 @@ import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
+import frc.robot.GlobalVars;
 import frc.robot.Constants.*;
 import frc.robot.util.Logger;
 
@@ -113,27 +114,33 @@ public class DriveSubsystem extends SubsystemBase {
     PDH = new PowerDistribution(DrivebaseConstants.PDH_PORT_CANID, ModuleType.kRev);
   }
 
-  public void arcadeDrive(double speed, double rotation, boolean sniperMode) {
+  public void arcadeDrive(double speed, double rotation) {
     if (speed < DrivebaseConstants.DEADZONE && speed > -DrivebaseConstants.DEADZONE) {
+      speed = 0;
+    }
+    else {
       if (speed > 0) {
-        speed = Math.sqrt(speed);
+        speed = speed * speed;
       }
       else {
-        speed = -1 * Math.sqrt(Math.abs(speed));
+        speed = -speed * speed;
       }
     }
 
     if (rotation < DrivebaseConstants.DEADZONE && rotation > -DrivebaseConstants.DEADZONE) {
+      rotation = 0;
+    }
+    else {
       if (rotation > 0) {
-        rotation = Math.sqrt(rotation);
+        rotation = rotation * rotation;
       }
       else {
-        rotation = -1 * Math.sqrt(Math.abs(rotation));
+        rotation = -rotation * rotation;
       }
     }
 
-    speed = (sniperMode) ?  speed * DrivebaseConstants.SNIPER_SPEED : speed * DrivebaseConstants.SPEED_REDUCTION;
-    rotation = (sniperMode) ?  rotation * DrivebaseConstants.SNIPER_SPEED : rotation * DrivebaseConstants.ROTATION_REDUCTION;
+    speed = (GlobalVars.sniperMode) ?  speed * DrivebaseConstants.SNIPER_SPEED : speed * DrivebaseConstants.SPEED_REDUCTION;
+    rotation = (GlobalVars.sniperMode) ?  rotation * DrivebaseConstants.SNIPER_SPEED : rotation * DrivebaseConstants.ROTATION_REDUCTION;
 
     robotDrive.arcadeDrive(speed, rotation);
   }
@@ -294,10 +301,10 @@ public class DriveSubsystem extends SubsystemBase {
     {
       //Positive turn
       if(Math.round(navX.getAngle()) < (StartingYaw + Angle))
-        arcadeDrive(0.0,((navX.getAngle() - Angle)/(StartingYaw + Angle)), false);
+        arcadeDrive(0.0,((navX.getAngle() - Angle)/(StartingYaw + Angle)));
       //Negative turn
       else
-        arcadeDrive(0.0,(-(navX.getAngle() - Angle)/(StartingYaw + Angle)), false);
+        arcadeDrive(0.0,(-(navX.getAngle() - Angle)/(StartingYaw + Angle)));
     }
   }
 
@@ -314,15 +321,16 @@ public class DriveSubsystem extends SubsystemBase {
       time = Timer.getFPGATimestamp();
       //Positive translation
       if(Math.round(Distance) < Math.round(rightBackMotor.getEncoder().getVelocity() * time))
-        arcadeDrive(Math.round((rightBackMotor.getEncoder().getPosition() / rightBackMotor.getEncoder().getCountsPerRevolution())),0.0,false);
+        arcadeDrive(Math.round((rightBackMotor.getEncoder().getPosition() / rightBackMotor.getEncoder().getCountsPerRevolution())),0.0);
       //Negative translation
       else
-        arcadeDrive(-Math.round((rightBackMotor.getEncoder().getPosition() / rightBackMotor.getEncoder().getCountsPerRevolution())), 0.0, false);
+        arcadeDrive(-Math.round((rightBackMotor.getEncoder().getPosition() / rightBackMotor.getEncoder().getCountsPerRevolution())), 0.0);
     }
   }
 
   public void stop() {
-    arcadeDrive(0, 0, false);
+    arcadeDrive(0, 0);
+    GlobalVars.sniperMode = false;
   }
  
   @Override

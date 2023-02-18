@@ -28,18 +28,23 @@ public class ArmSubsystem extends SubsystemBase {
         biscepEncoder.setPositionConversionFactor(360);
         biscepEncoder.setVelocityConversionFactor(360);
 
+        biscep.setSmartCurrentLimit(ArmConstants.ARM_MOTOR_CURRENT_LIMIT);
+
         biscepPID = biscep.getPIDController();
 
         configPID(0, 0, 0, 0, 0, 0, biscepEncoder, biscepPID);
     }
 
-/*    public void movetopoint(double x, double y, double claw) {
-
-
-    }*/
-
     public void setArm(double speed) {
         biscep.set(speed);
+    }
+
+    public void armUp() {
+        biscep.set(0.5);
+    }
+
+    public void armDown() {
+        biscep.set(-0.5);
     }
 
     public void posArm(double angle) {

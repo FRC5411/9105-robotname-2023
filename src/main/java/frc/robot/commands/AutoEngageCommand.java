@@ -61,7 +61,7 @@ public class AutoEngageCommand extends CommandBase {
       drivePowerYaw = Math.copySign(0.4, drivePowerYaw);
     }
 
-    robotDrive.arcadeDrive(drivePowerPitch, currentAngleYaw, true);
+    robotDrive.arcadeDrive(drivePowerPitch, currentAngleYaw);
     
     // Debugging Print Statments
     System.out.println("Current Angle: " + currentAngleYaw);

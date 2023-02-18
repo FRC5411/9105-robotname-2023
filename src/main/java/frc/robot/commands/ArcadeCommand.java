@@ -13,13 +13,11 @@ public class ArcadeCommand extends CommandBase {
   private DoubleSupplier speed;
   private DoubleSupplier rotation;
   private DriveSubsystem robotDrive;
-  private boolean sniperMode;
 
-  public ArcadeCommand(DoubleSupplier speed, DoubleSupplier rotation, boolean sniperMode, DriveSubsystem robotDrive) {
+  public ArcadeCommand(DoubleSupplier speed, DoubleSupplier rotation, DriveSubsystem robotDrive) {
     this.speed = speed;
     this.rotation = rotation;
     this.robotDrive = robotDrive;
-    this.sniperMode = sniperMode;
     addRequirements(robotDrive);
   }
 
@@ -30,7 +28,7 @@ public class ArcadeCommand extends CommandBase {
 
   @Override
   public void execute() {
-    robotDrive.arcadeDrive(speed.getAsDouble(), rotation.getAsDouble(), sniperMode);
+    robotDrive.arcadeDrive(speed.getAsDouble(), rotation.getAsDouble());
   }
 
   @Override
