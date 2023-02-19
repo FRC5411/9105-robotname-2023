@@ -99,6 +99,29 @@ public final class Constants {
     public static final String TEAM_COLOR = "blue".toLowerCase().strip();
   }
 
+  public static class ButtonBoardConstants {
+    public static final int SCORE_HIGH_BUTTON = 1;
+    public static final int SCORE_MID_BUTTON = 1;
+    public static final int SCORE_LOW_BUTTON = 1;
+
+    public static final int TOGGLE_CUBE_MODE_BUTTON = 1;
+    public static final int TOGGLE_CONE_MODE_BUTTON = 1;
+
+    public static final int PICKUP_SUBSTATION_BUTTON = 1;
+    public static final int PICKUP_GROUND_BUTTON = 1;
+
+    public static final int TOGGLE_ALIGNMENT_BUTTON = 1;
+    public static final int TOGGLE_SNIPER_MODE_BUTTON = 1;
+
+    public static final int RETURN_TO_IDLE_BUTTON = 1;
+    public static final int FULL_EXTENSION_BUTTON = 1;
+
+    public static final int ARM_UP_BUTTON = 1;
+    public static final int ARM_DOWN_BUTTON = 1;
+    
+    public static final int CANCEL_CURRENT_COMMAND_BUTTON = 1;
+  }
+
   public static final double BEAM_BALANACED_DRIVE_KP =   1;
   public static final double BEAM_BALANCED_GOAL_DEGREES = 0;
   public static final double BACKWARDS_BALANCING_EXTRA_POWER_MULTIPLIER = 1.35;
