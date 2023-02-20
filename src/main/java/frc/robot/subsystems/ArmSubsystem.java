@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.SparkMaxAlternateEncoder;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.SparkMaxPIDController.AccelStrategy;
@@ -15,7 +16,8 @@ public class ArmSubsystem extends SubsystemBase {
     private final CANSparkMax mBiscep;
     private final CANSparkMax mBiscep2;
     private final RelativeEncoder biscepEncoder;  
-    private final SparkMaxPIDController biscepPID;  
+    private final SparkMaxPIDController biscepPID;
+    private final SparkMaxAlternateEncoder.Type kAltEncType;
 
 
     public ArmSubsystem() {
@@ -27,7 +29,9 @@ public class ArmSubsystem extends SubsystemBase {
         mBiscep2.setIdleMode(IdleMode.kBrake);
         mBiscep2.follow(mBiscep);
 
-        biscepEncoder = mBiscep.getEncoder();
+        kAltEncType = SparkMaxAlternateEncoder.Type.kQuadrature;
+
+        biscepEncoder = mBiscep.getAlternateEncoder(kAltEncType, 8192);
         biscepEncoder.setPositionConversionFactor(360);
         biscepEncoder.setVelocityConversionFactor(360);
 
@@ -145,7 +149,7 @@ public class ArmSubsystem extends SubsystemBase {
         controller.setFF(FF, profile);
         controller.setSmartMotionMaxAccel(maxA, profile);
         controller.setSmartMotionMaxVelocity(maxV, profile);
-        controller.setSmartMotionAccelStrategy(AccelStrategy.kSCurve, profile);
+        controller.setSmartMotionAccelStrategy(AccelStrategy.kTrapezoidal, profile);
         controller.setFeedbackDevice(encoder);
     }
 }

@@ -53,6 +53,13 @@ public class LimelightSubsystem extends SubsystemBase {
     return new Pose2d(translate, rotation);
   }
 
+  public Pose2d getTarget2d() {
+    posevalues = limelight.getEntry("targetpose_cameraspace").getDoubleArray(new double[6]);
+    Translation2d translate = new Translation2d(posevalues[3], posevalues[4]);
+    Rotation2d rotation = new Rotation2d(Math.toRadians(posevalues[3]));
+    return new Pose2d(translate, rotation);
+  }
+
   @Override
   public void periodic() {
   /*  
