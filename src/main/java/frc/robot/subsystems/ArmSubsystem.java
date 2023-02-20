@@ -24,35 +24,17 @@ public class ArmSubsystem extends SubsystemBase {
 
 
         mBiscep.setIdleMode(IdleMode.kBrake);
-
-
         mBiscep2.setIdleMode(IdleMode.kBrake);
         mBiscep2.follow(mBiscep);
 
-
-
-
         biscepEncoder = mBiscep.getEncoder();
-
-
         biscepEncoder.setPositionConversionFactor(360);
-
-
         biscepEncoder.setVelocityConversionFactor(360);
-
 
         biscepPID = mBiscep.getPIDController();
 
-
         configPID(0, 0, 0, 0, 0, 0, biscepEncoder, biscepPID);
     }
-
-
-/*    public void movetopoint(double x, double y, double claw) {
-
-
-    }*/
-
 
     public void setArm(double speed) {
         mBiscep.set(speed);

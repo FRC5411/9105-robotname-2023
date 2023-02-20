@@ -22,7 +22,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import frc.robot.Constants;
 import frc.robot.Constants.*;
-import frc.robot.util.Logger;
+//import frc.robot.util.Logger;
 
 
 /** Drive subsystem */
@@ -34,8 +34,10 @@ public class DriveSubsystem extends SubsystemBase {
   private CANSparkMax rightFrontMotor;
   private CANSparkMax rightBackMotor;
 
+
   // private MotorControllerGroup leftMotors;
   // private MotorControllerGroup rightMotors;
+
 
   private DifferentialDrive robotDrive;
   private LimelightSubsystem m_vision;
@@ -43,15 +45,19 @@ public class DriveSubsystem extends SubsystemBase {
   private RelativeEncoder leftEncoder;
   private RelativeEncoder rightEncoder;
 
+
   private double DEADZONE_VAL;
   private double SNIPER_SPEED;
   private double SPEED;
   private double ROTATION;
   private Pose2d initial_pose;
 
+
   private AHRS navX;
 
+
   private DifferentialDrivePoseEstimator odometry;
+
 
 //  Logger dataLogger;
   Timer timer;
@@ -63,6 +69,7 @@ public class DriveSubsystem extends SubsystemBase {
       DrivebaseConstants.LF_MOTOR,
       CANSparkMax.MotorType.kBrushless
     );
+
 
     leftBackMotor = new CANSparkMax(
       DrivebaseConstants.LB_MOTOR,
@@ -406,6 +413,13 @@ public class DriveSubsystem extends SubsystemBase {
         arcadeDrive(0.0,(-(navX.getAngle() - Angle)/(StartingYaw + Angle)), false);
     }
   }
+
+
+
+
+
+
+
 
   /**
   * Position robot to new distance
