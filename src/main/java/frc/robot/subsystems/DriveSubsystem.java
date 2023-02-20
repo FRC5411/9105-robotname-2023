@@ -244,6 +244,7 @@ public class DriveSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("Left Motor Temp: ", getLeftMotorTemp());
     SmartDashboard.putNumber("Right Motor Temp: ", getRightMotorTemp());
 
+    /* 
     if (timer.get() == 1) {
       timer.reset();
       double velocity = (getRightEncoderVelocity() + getLeftEncoderVelocity()) / 2;
@@ -254,7 +255,7 @@ public class DriveSubsystem extends SubsystemBase {
         velocity,
         PDH.getVoltage()
         ); 
-    }
+    } */
   }
 
   /**

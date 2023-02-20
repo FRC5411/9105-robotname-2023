@@ -71,6 +71,7 @@
      xButton = controller.x();
      yButton = controller.y();
 
+     /* 
      scoreHighButton = new JoystickButton(buttonBoard, ButtonBoardConstants.SCORE_HIGH_BUTTON);
      scoreMidButton = new JoystickButton(buttonBoard, ButtonBoardConstants.SCORE_MID_BUTTON);
      scoreLowButton = new JoystickButton(buttonBoard, ButtonBoardConstants.SCORE_LOW_BUTTON);
@@ -85,6 +86,7 @@
      armUpButton = new JoystickButton(buttonBoard, ButtonBoardConstants.ARM_UP_BUTTON);
      armDownButton = new JoystickButton(buttonBoard, ButtonBoardConstants.ARM_DOWN_BUTTON);
      cancelCurrentCommandButton = new JoystickButton(buttonBoard, ButtonBoardConstants.CANCEL_CURRENT_COMMAND_BUTTON);
+    */
 
      robotDrive.setDefaultCommand(new ArcadeCommand(
        () -> controller.getLeftY(),

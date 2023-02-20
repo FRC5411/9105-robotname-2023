@@ -4,6 +4,7 @@ package frc.robot.subsystems;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkMax.IdleMode;
+import com.revrobotics.CANSparkMax.SoftLimitDirection;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.SparkMaxPIDController.AccelStrategy;
 import com.revrobotics.SparkMaxPIDController;
@@ -29,6 +30,11 @@ public class ArmSubsystem extends SubsystemBase {
         biscepEncoder.setVelocityConversionFactor(360);
 
         biscep.setSmartCurrentLimit(ArmConstants.ARM_MOTOR_CURRENT_LIMIT);
+        
+        biscep.enableSoftLimit(SoftLimitDirection.kForward, true);
+        biscep.enableSoftLimit(SoftLimitDirection.kReverse, true);
+        biscep.setSoftLimit(SoftLimitDirection.kForward, 15);
+        biscep.setSoftLimit(SoftLimitDirection.kReverse, 0);
 
         biscepPID = biscep.getPIDController();
 
