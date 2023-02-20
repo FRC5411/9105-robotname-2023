@@ -26,7 +26,6 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.AutonoumousConstants;
 import frc.robot.Constants.DrivebaseConstants;
-import frc.robot.Constants;
 import frc.robot.GlobalVars;
 import frc.robot.util.Logger;
 
@@ -263,39 +262,38 @@ public class DriveSubsystem extends SubsystemBase {
 
   /**
    * Align the robot with a given apriltag target
-   * @param TargetPose - The pose2d of the best apriltag target from the camera
-   * @param RobotPose - The pose2d of the robot relative to the limelight camera
+   * @param Limelight - The limelight subsystem responsible for tracking targets
    * @author Cody Washington
    */
-  public void apriltagAlignment(Pose2d TargetPose, Pose2d RobotPose)
+  public void apriltagAlignment(LimelightSubsystem Limelight)
   {
     GlobalVars.sniperMode = true;
     //Case one; target oriented to direct (Within 5 degrees of error)
-    if(Math.abs(TargetPose.getRotation().getDegrees() - RobotPose.getRotation().getDegrees()) > 15)
+    if(Math.abs(Limelight.getYaw()) > 15)
     {
-      TargetPose.getTranslation().getDistance(RobotPose.getTranslation());
+      Limelight.getTarget2d().getTranslation().getDistance(Limelight.getPose().getTranslation());
       switch(GlobalVars.scoreType)
       {
         case 0:
-          while(Math.round(TargetPose.getTranslation().getDistance(RobotPose.getTranslation())) != Math.round(DrivebaseConstants.LOW_SCORE_DISTANCE))
+          while(Math.round(Limelight.getTarget2d().getTranslation().getDistance(Limelight.getPose().getTranslation())) != Math.round(DrivebaseConstants.LOW_SCORE_DISTANCE))
           {
-            if(Math.round(TargetPose.getTranslation().getDistance(RobotPose.getTranslation())) > Math.round(DrivebaseConstants.LOW_SCORE_DISTANCE))
+            if(Math.round(Limelight.getTarget2d().getTranslation().getDistance(Limelight.getPose().getTranslation())) > Math.round(DrivebaseConstants.LOW_SCORE_DISTANCE))
               arcadeDrive(1, 0);
             else
               arcadeDrive((-1), 0);
           }
         case 1:
-          while(Math.round(TargetPose.getTranslation().getDistance(RobotPose.getTranslation())) != Math.round(DrivebaseConstants.MID_SCORE_DISTANCE))
+          while(Math.round(Limelight.getTarget2d().getTranslation().getDistance(Limelight.getPose().getTranslation())) != Math.round(DrivebaseConstants.MID_SCORE_DISTANCE))
           {
-            if(Math.round(TargetPose.getTranslation().getDistance(RobotPose.getTranslation())) > Math.round(DrivebaseConstants.MID_SCORE_DISTANCE))
+            if(Math.round(Limelight.getTarget2d().getTranslation().getDistance(Limelight.getPose().getTranslation())) > Math.round(DrivebaseConstants.MID_SCORE_DISTANCE))
               arcadeDrive(1, 0);
             else
               arcadeDrive((-1), 0);
           }
         case 2:
-          while(Math.round(TargetPose.getTranslation().getDistance(RobotPose.getTranslation())) != Math.round(DrivebaseConstants.HIGH_SCORE_DISTANCE))
+          while(Math.round(Limelight.getTarget2d().getTranslation().getDistance(Limelight.getPose().getTranslation())) != Math.round(DrivebaseConstants.HIGH_SCORE_DISTANCE))
           {
-            if(Math.round(TargetPose.getTranslation().getDistance(RobotPose.getTranslation())) > Math.round(DrivebaseConstants.HIGH_SCORE_DISTANCE))
+            if(Math.round(Limelight.getTarget2d().getTranslation().getDistance(Limelight.getPose().getTranslation())) > Math.round(DrivebaseConstants.HIGH_SCORE_DISTANCE))
               arcadeDrive(1, 0);
             else
               arcadeDrive((-1), 0);
@@ -303,50 +301,50 @@ public class DriveSubsystem extends SubsystemBase {
       }
     }
     //Case two; target oriented to perpendicular (Within 5 degrees of error)
-    else if (Math.abs(Math.round(RobotPose.minus(TargetPose).getRotation().getDegrees())) < 15)
+    else if (Math.abs(Math.round(Limelight.getPose().minus(Limelight.getTarget2d()).getRotation().getDegrees())) < 15)
     {
       switch(GlobalVars.gamePieceMode)
       {
         case "CONE":
-          while(Math.round(TargetPose.getTranslation().getDistance(RobotPose.getTranslation())) != Math.round(DrivebaseConstants.CONE_SCORE_DISTANCE))
+          while(Math.round(Limelight.getTarget2d().getTranslation().getDistance(Limelight.getPose().getTranslation())) != Math.round(DrivebaseConstants.CONE_SCORE_DISTANCE))
           {
-            if(Math.round(TargetPose.getTranslation().getDistance(RobotPose.getTranslation())) > Math.round(DrivebaseConstants.CONE_SCORE_DISTANCE))
+            if(Math.round(Limelight.getTarget2d().getTranslation().getDistance(Limelight.getPose().getTranslation())) > Math.round(DrivebaseConstants.CONE_SCORE_DISTANCE))
               arcadeDrive(1, 0);
             else
               arcadeDrive((-1), 0);
           }
         case "CUBE":
-          while(Math.round(TargetPose.getTranslation().getDistance(RobotPose.getTranslation())) != Math.round(DrivebaseConstants.CUBE_SCORE_DISTANCE))
+          while(Math.round(Limelight.getTarget2d().getTranslation().getDistance(Limelight.getPose().getTranslation())) != Math.round(DrivebaseConstants.CUBE_SCORE_DISTANCE))
           {
-            if(Math.round(TargetPose.getTranslation().getDistance(RobotPose.getTranslation())) > Math.round(DrivebaseConstants.CUBE_SCORE_DISTANCE))
+            if(Math.round(Limelight.getTarget2d().getTranslation().getDistance(Limelight.getPose().getTranslation())) > Math.round(DrivebaseConstants.CUBE_SCORE_DISTANCE))
               arcadeDrive(1, 0);
             else
               arcadeDrive((-1), 0);
           }
       }
-      arcadeDrive(0.0, (TargetPose.getRotation().getDegrees() > 0)? (-90): (90));
+      arcadeDrive(0.0, (Limelight.getTarget2d().getRotation().getDegrees() > 0)? (-90): (90));
       switch(GlobalVars.scoreType)
       {
         case 0:
-          while(Math.round(TargetPose.getTranslation().getDistance(RobotPose.getTranslation())) != Math.round(DrivebaseConstants.LOW_SCORE_DISTANCE))
+          while(Math.round(Limelight.getTarget2d().getTranslation().getDistance(Limelight.getPose().getTranslation())) != Math.round(DrivebaseConstants.LOW_SCORE_DISTANCE))
           {
-            if(Math.round(TargetPose.getTranslation().getDistance(RobotPose.getTranslation())) > Math.round(DrivebaseConstants.LOW_SCORE_DISTANCE))
+            if(Math.round(Limelight.getTarget2d().getTranslation().getDistance(Limelight.getPose().getTranslation())) > Math.round(DrivebaseConstants.LOW_SCORE_DISTANCE))
               arcadeDrive(1, 0);
             else
               arcadeDrive((-1), 0);
           }
         case 1:
-          while(Math.round(TargetPose.getTranslation().getDistance(RobotPose.getTranslation())) != Math.round(DrivebaseConstants.MID_SCORE_DISTANCE))
+          while(Math.round(Limelight.getTarget2d().getTranslation().getDistance(Limelight.getPose().getTranslation())) != Math.round(DrivebaseConstants.MID_SCORE_DISTANCE))
           {
-            if(Math.round(TargetPose.getTranslation().getDistance(RobotPose.getTranslation())) > Math.round(DrivebaseConstants.MID_SCORE_DISTANCE))
+            if(Math.round(Limelight.getTarget2d().getTranslation().getDistance(Limelight.getPose().getTranslation())) > Math.round(DrivebaseConstants.MID_SCORE_DISTANCE))
               arcadeDrive(1, 0);
             else
               arcadeDrive((-1), 0);
           }
         case 2:
-          while(Math.round(TargetPose.getTranslation().getDistance(RobotPose.getTranslation())) != Math.round(DrivebaseConstants.HIGH_SCORE_DISTANCE))
+          while(Math.round(Limelight.getTarget2d().getTranslation().getDistance(Limelight.getPose().getTranslation())) != Math.round(DrivebaseConstants.HIGH_SCORE_DISTANCE))
           {
-            if(Math.round(TargetPose.getTranslation().getDistance(RobotPose.getTranslation())) > Math.round(DrivebaseConstants.HIGH_SCORE_DISTANCE))
+            if(Math.round(Limelight.getTarget2d().getTranslation().getDistance(Limelight.getPose().getTranslation())) > Math.round(DrivebaseConstants.HIGH_SCORE_DISTANCE))
               arcadeDrive(1, 0);
             else
               arcadeDrive((-1), 0);
@@ -356,52 +354,52 @@ public class DriveSubsystem extends SubsystemBase {
     //Case three; target oriented other
     else
     {
-      Pose2d PerpendicularPose = new Pose2d(((RobotPose.getY() * TargetPose.getRotation().getDegrees()) - (RobotPose.getRotation().getDegrees() * TargetPose.getY())),
-      ((RobotPose.getRotation().getDegrees() * TargetPose.getX()) - (RobotPose.getX() * TargetPose.getRotation().getDegrees())), 
-      (new Rotation2d((RobotPose.getX() * TargetPose.getY()) - (RobotPose.getY() * TargetPose.getX()))));
+      Pose2d PerpendicularPose = new Pose2d(((Limelight.getPose().getY() * Limelight.getTarget2d().getRotation().getDegrees()) - (Limelight.getPose().getRotation().getDegrees() * Limelight.getTarget2d().getY())),
+      ((Limelight.getPose().getRotation().getDegrees() * Limelight.getTarget2d().getX()) - (Limelight.getPose().getX() * Limelight.getTarget2d().getRotation().getDegrees())), 
+      (new Rotation2d((Limelight.getPose().getX() * Limelight.getTarget2d().getY()) - (Limelight.getPose().getY() * Limelight.getTarget2d().getX()))));
       arcadeDrive(0, PerpendicularPose.getRotation().getDegrees());
       switch(GlobalVars.gamePieceMode)
       {
         case "CONE":
-          while(Math.round(TargetPose.getTranslation().getDistance(RobotPose.getTranslation())) != Math.round(DrivebaseConstants.CONE_SCORE_DISTANCE))
+          while(Math.round(Limelight.getTarget2d().getTranslation().getDistance(Limelight.getPose().getTranslation())) != Math.round(DrivebaseConstants.CONE_SCORE_DISTANCE))
           {
-            if(Math.round(TargetPose.getTranslation().getDistance(RobotPose.getTranslation())) > Math.round(DrivebaseConstants.CONE_SCORE_DISTANCE))
+            if(Math.round(Limelight.getTarget2d().getTranslation().getDistance(Limelight.getPose().getTranslation())) > Math.round(DrivebaseConstants.CONE_SCORE_DISTANCE))
               arcadeDrive(1, 0);
             else
               arcadeDrive((-1), 0);
           }
         case "CUBE":
-          while(Math.round(TargetPose.getTranslation().getDistance(RobotPose.getTranslation())) != Math.round(DrivebaseConstants.CUBE_SCORE_DISTANCE))
+          while(Math.round(Limelight.getTarget2d().getTranslation().getDistance(Limelight.getPose().getTranslation())) != Math.round(DrivebaseConstants.CUBE_SCORE_DISTANCE))
           {
-            if(Math.round(TargetPose.getTranslation().getDistance(RobotPose.getTranslation())) > Math.round(DrivebaseConstants.CUBE_SCORE_DISTANCE))
+            if(Math.round(Limelight.getTarget2d().getTranslation().getDistance(Limelight.getPose().getTranslation())) > Math.round(DrivebaseConstants.CUBE_SCORE_DISTANCE))
               arcadeDrive(1, 0);
             else
               arcadeDrive((-1), 0);
           }
       }
-      arcadeDrive(0.0, (TargetPose.getRotation().getDegrees() > 0)? (-90): (90));
+      arcadeDrive(0.0, (Limelight.getTarget2d().getRotation().getDegrees() > 0)? (-90): (90));
       switch(GlobalVars.scoreType)
       {
         case 0:
-          while(Math.round(TargetPose.getTranslation().getDistance(RobotPose.getTranslation())) != Math.round(DrivebaseConstants.LOW_SCORE_DISTANCE))
+          while(Math.round(Limelight.getTarget2d().getTranslation().getDistance(Limelight.getPose().getTranslation())) != Math.round(DrivebaseConstants.LOW_SCORE_DISTANCE))
           {
-            if(Math.round(TargetPose.getTranslation().getDistance(RobotPose.getTranslation())) > Math.round(DrivebaseConstants.LOW_SCORE_DISTANCE))
+            if(Math.round(Limelight.getTarget2d().getTranslation().getDistance(Limelight.getPose().getTranslation())) > Math.round(DrivebaseConstants.LOW_SCORE_DISTANCE))
               arcadeDrive(1, 0);
             else
               arcadeDrive((-1), 0);
           }
         case 1:
-          while(Math.round(TargetPose.getTranslation().getDistance(RobotPose.getTranslation())) != Math.round(DrivebaseConstants.MID_SCORE_DISTANCE))
+          while(Math.round(Limelight.getTarget2d().getTranslation().getDistance(Limelight.getPose().getTranslation())) != Math.round(DrivebaseConstants.MID_SCORE_DISTANCE))
           {
-            if(Math.round(TargetPose.getTranslation().getDistance(RobotPose.getTranslation())) > Math.round(DrivebaseConstants.MID_SCORE_DISTANCE))
+            if(Math.round(Limelight.getTarget2d().getTranslation().getDistance(Limelight.getPose().getTranslation())) > Math.round(DrivebaseConstants.MID_SCORE_DISTANCE))
               arcadeDrive(1, 0);
             else
               arcadeDrive((-1), 0);
           }
         case 2:
-          while(Math.round(TargetPose.getTranslation().getDistance(RobotPose.getTranslation())) != Math.round(DrivebaseConstants.HIGH_SCORE_DISTANCE))
+          while(Math.round(Limelight.getTarget2d().getTranslation().getDistance(Limelight.getPose().getTranslation())) != Math.round(DrivebaseConstants.HIGH_SCORE_DISTANCE))
           {
-            if(Math.round(TargetPose.getTranslation().getDistance(RobotPose.getTranslation())) > Math.round(DrivebaseConstants.HIGH_SCORE_DISTANCE))
+            if(Math.round(Limelight.getTarget2d().getTranslation().getDistance(Limelight.getPose().getTranslation())) > Math.round(DrivebaseConstants.HIGH_SCORE_DISTANCE))
               arcadeDrive(1, 0);
             else
               arcadeDrive((-1), 0);
@@ -418,4 +416,5 @@ public class DriveSubsystem extends SubsystemBase {
  
   @Override
   public void simulationPeriodic() {}
+
 }
