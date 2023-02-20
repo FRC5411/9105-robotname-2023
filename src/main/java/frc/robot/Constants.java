@@ -31,7 +31,10 @@ public final class Constants {
     public static final double SPEED_REDUCTION = 0.95;
     public static final double ROTATION_REDUCTION = 0.4;
 
-    // TO-DO: GET CORRECT DISTANCE VALUES
+    // TODO: GET CORRECT DISTANCE VALUES
+
+    public static final double CONE_SCORE_DISTANCE = 1;
+    public static final double CUBE_SCORE_DISTANCE = 1;
     public static final double LOW_SCORE_DISTANCE = 1;
     public static final double MID_SCORE_DISTANCE = 1;
     public static final double HIGH_SCORE_DISTANCE = 1;

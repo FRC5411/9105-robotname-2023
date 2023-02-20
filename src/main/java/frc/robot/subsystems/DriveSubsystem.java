@@ -6,24 +6,28 @@ import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.commands.PPRamseteCommand;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
+
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.RamseteController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.estimator.DifferentialDrivePoseEstimator;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
+import edu.wpi.first.wpilibj.PowerDistribution;
+import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
+import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj.PowerDistribution;
-import edu.wpi.first.wpilibj.SPI;
-import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
+import frc.robot.Constants.AutonoumousConstants;
+import frc.robot.Constants.DrivebaseConstants;
+import frc.robot.Constants;
 import frc.robot.GlobalVars;
-import frc.robot.Constants.*;
 import frc.robot.util.Logger;
 
 public class DriveSubsystem extends SubsystemBase {
@@ -258,75 +262,154 @@ public class DriveSubsystem extends SubsystemBase {
   }
 
   /**
-  * Position robot for score type.
-  * @param HeldObjectType - The type of object: cone(true), cube(false)
-  * @param ScoreType - The type of score: low(0), mid(1), high(2)
-  * @param Yaw - Angle to target
-  * @param TargetDistance - Magnitude to target
-  * @author Cody Washington
-  */
-  public void autoAlignment(boolean HeldObjectType, int ScoreType, double TargetAngle, double TargetDistance)
+   * Align the robot with a given apriltag target
+   * @param TargetPose - The pose2d of the best apriltag target from the camera
+   * @param RobotPose - The pose2d of the robot relative to the limelight camera
+   * @author Cody Washington
+   */
+  public void apriltagAlignment(Pose2d TargetPose, Pose2d RobotPose)
   {
-    double Target_X_Distance = (Math.sin(TargetAngle) * TargetDistance);
-    double Target_Z_Distance = (Math.cos(TargetAngle) * TargetDistance);
-    ScoreType = (ScoreType > 2)? (2): (ScoreType);
-    toAngle((Math.atan(Target_Z_Distance/Target_X_Distance) > 0)? (90): (-90));
-    toDistance(((HeldObjectType && ((ScoreType == 1)? (true): (false)||(ScoreType == 2)? (true): (false)))? (Target_X_Distance-=18.5): (Target_X_Distance)));
-    toAngle((Math.atan(Target_Z_Distance/Target_X_Distance) > 0)? (-180): (180));
-    //Target type distance
-    switch(ScoreType)
+    GlobalVars.sniperMode = true;
+    //Case one; target oriented to direct (Within 5 degrees of error)
+    if(Math.abs(TargetPose.getRotation().getDegrees() - RobotPose.getRotation().getDegrees()) > 15)
     {
-      //Low score distance
-      case 0:
-        toDistance(DrivebaseConstants.LOW_SCORE_DISTANCE);
-      //Mid score distance
-      case 1:
-        toDistance(DrivebaseConstants.MID_SCORE_DISTANCE);
-      //High score distance
-      case 2:
-        toDistance(DrivebaseConstants.HIGH_SCORE_DISTANCE);
+      TargetPose.getTranslation().getDistance(RobotPose.getTranslation());
+      switch(GlobalVars.scoreType)
+      {
+        case 0:
+          while(Math.round(TargetPose.getTranslation().getDistance(RobotPose.getTranslation())) != Math.round(DrivebaseConstants.LOW_SCORE_DISTANCE))
+          {
+            if(Math.round(TargetPose.getTranslation().getDistance(RobotPose.getTranslation())) > Math.round(DrivebaseConstants.LOW_SCORE_DISTANCE))
+              arcadeDrive(1, 0);
+            else
+              arcadeDrive((-1), 0);
+          }
+        case 1:
+          while(Math.round(TargetPose.getTranslation().getDistance(RobotPose.getTranslation())) != Math.round(DrivebaseConstants.MID_SCORE_DISTANCE))
+          {
+            if(Math.round(TargetPose.getTranslation().getDistance(RobotPose.getTranslation())) > Math.round(DrivebaseConstants.MID_SCORE_DISTANCE))
+              arcadeDrive(1, 0);
+            else
+              arcadeDrive((-1), 0);
+          }
+        case 2:
+          while(Math.round(TargetPose.getTranslation().getDistance(RobotPose.getTranslation())) != Math.round(DrivebaseConstants.HIGH_SCORE_DISTANCE))
+          {
+            if(Math.round(TargetPose.getTranslation().getDistance(RobotPose.getTranslation())) > Math.round(DrivebaseConstants.HIGH_SCORE_DISTANCE))
+              arcadeDrive(1, 0);
+            else
+              arcadeDrive((-1), 0);
+          }
+      }
+    }
+    //Case two; target oriented to perpendicular (Within 5 degrees of error)
+    else if (Math.abs(Math.round(RobotPose.minus(TargetPose).getRotation().getDegrees())) < 15)
+    {
+      switch(GlobalVars.gamePieceMode)
+      {
+        case "CONE":
+          while(Math.round(TargetPose.getTranslation().getDistance(RobotPose.getTranslation())) != Math.round(DrivebaseConstants.CONE_SCORE_DISTANCE))
+          {
+            if(Math.round(TargetPose.getTranslation().getDistance(RobotPose.getTranslation())) > Math.round(DrivebaseConstants.CONE_SCORE_DISTANCE))
+              arcadeDrive(1, 0);
+            else
+              arcadeDrive((-1), 0);
+          }
+        case "CUBE":
+          while(Math.round(TargetPose.getTranslation().getDistance(RobotPose.getTranslation())) != Math.round(DrivebaseConstants.CUBE_SCORE_DISTANCE))
+          {
+            if(Math.round(TargetPose.getTranslation().getDistance(RobotPose.getTranslation())) > Math.round(DrivebaseConstants.CUBE_SCORE_DISTANCE))
+              arcadeDrive(1, 0);
+            else
+              arcadeDrive((-1), 0);
+          }
+      }
+      arcadeDrive(0.0, (TargetPose.getRotation().getDegrees() > 0)? (-90): (90));
+      switch(GlobalVars.scoreType)
+      {
+        case 0:
+          while(Math.round(TargetPose.getTranslation().getDistance(RobotPose.getTranslation())) != Math.round(DrivebaseConstants.LOW_SCORE_DISTANCE))
+          {
+            if(Math.round(TargetPose.getTranslation().getDistance(RobotPose.getTranslation())) > Math.round(DrivebaseConstants.LOW_SCORE_DISTANCE))
+              arcadeDrive(1, 0);
+            else
+              arcadeDrive((-1), 0);
+          }
+        case 1:
+          while(Math.round(TargetPose.getTranslation().getDistance(RobotPose.getTranslation())) != Math.round(DrivebaseConstants.MID_SCORE_DISTANCE))
+          {
+            if(Math.round(TargetPose.getTranslation().getDistance(RobotPose.getTranslation())) > Math.round(DrivebaseConstants.MID_SCORE_DISTANCE))
+              arcadeDrive(1, 0);
+            else
+              arcadeDrive((-1), 0);
+          }
+        case 2:
+          while(Math.round(TargetPose.getTranslation().getDistance(RobotPose.getTranslation())) != Math.round(DrivebaseConstants.HIGH_SCORE_DISTANCE))
+          {
+            if(Math.round(TargetPose.getTranslation().getDistance(RobotPose.getTranslation())) > Math.round(DrivebaseConstants.HIGH_SCORE_DISTANCE))
+              arcadeDrive(1, 0);
+            else
+              arcadeDrive((-1), 0);
+          }
+      }
+    }
+    //Case three; target oriented other
+    else
+    {
+      Pose2d PerpendicularPose = new Pose2d(((RobotPose.getY() * TargetPose.getRotation().getDegrees()) - (RobotPose.getRotation().getDegrees() * TargetPose.getY())),
+      ((RobotPose.getRotation().getDegrees() * TargetPose.getX()) - (RobotPose.getX() * TargetPose.getRotation().getDegrees())), 
+      (new Rotation2d((RobotPose.getX() * TargetPose.getY()) - (RobotPose.getY() * TargetPose.getX()))));
+      arcadeDrive(0, PerpendicularPose.getRotation().getDegrees());
+      switch(GlobalVars.gamePieceMode)
+      {
+        case "CONE":
+          while(Math.round(TargetPose.getTranslation().getDistance(RobotPose.getTranslation())) != Math.round(DrivebaseConstants.CONE_SCORE_DISTANCE))
+          {
+            if(Math.round(TargetPose.getTranslation().getDistance(RobotPose.getTranslation())) > Math.round(DrivebaseConstants.CONE_SCORE_DISTANCE))
+              arcadeDrive(1, 0);
+            else
+              arcadeDrive((-1), 0);
+          }
+        case "CUBE":
+          while(Math.round(TargetPose.getTranslation().getDistance(RobotPose.getTranslation())) != Math.round(DrivebaseConstants.CUBE_SCORE_DISTANCE))
+          {
+            if(Math.round(TargetPose.getTranslation().getDistance(RobotPose.getTranslation())) > Math.round(DrivebaseConstants.CUBE_SCORE_DISTANCE))
+              arcadeDrive(1, 0);
+            else
+              arcadeDrive((-1), 0);
+          }
+      }
+      arcadeDrive(0.0, (TargetPose.getRotation().getDegrees() > 0)? (-90): (90));
+      switch(GlobalVars.scoreType)
+      {
+        case 0:
+          while(Math.round(TargetPose.getTranslation().getDistance(RobotPose.getTranslation())) != Math.round(DrivebaseConstants.LOW_SCORE_DISTANCE))
+          {
+            if(Math.round(TargetPose.getTranslation().getDistance(RobotPose.getTranslation())) > Math.round(DrivebaseConstants.LOW_SCORE_DISTANCE))
+              arcadeDrive(1, 0);
+            else
+              arcadeDrive((-1), 0);
+          }
+        case 1:
+          while(Math.round(TargetPose.getTranslation().getDistance(RobotPose.getTranslation())) != Math.round(DrivebaseConstants.MID_SCORE_DISTANCE))
+          {
+            if(Math.round(TargetPose.getTranslation().getDistance(RobotPose.getTranslation())) > Math.round(DrivebaseConstants.MID_SCORE_DISTANCE))
+              arcadeDrive(1, 0);
+            else
+              arcadeDrive((-1), 0);
+          }
+        case 2:
+          while(Math.round(TargetPose.getTranslation().getDistance(RobotPose.getTranslation())) != Math.round(DrivebaseConstants.HIGH_SCORE_DISTANCE))
+          {
+            if(Math.round(TargetPose.getTranslation().getDistance(RobotPose.getTranslation())) > Math.round(DrivebaseConstants.HIGH_SCORE_DISTANCE))
+              arcadeDrive(1, 0);
+            else
+              arcadeDrive((-1), 0);
+          }
+      }
     }
   }
 
-  /**
-  * Position robot to new angle
-  * @param Angle - New angle to reach.
-  * @author Cody Washington
-  */
-  public void toAngle(double Angle)
-  {
-    Angle = (int)Math.round(Angle);
-    double StartingYaw = (int)Math.round(navX.getAngle());
-    while(Math.round(navX.getAngle()) != (StartingYaw + Angle))
-    {
-      //Positive turn
-      if(Math.round(navX.getAngle()) < (StartingYaw + Angle))
-        arcadeDrive(0.0,((navX.getAngle() - Angle)/(StartingYaw + Angle)));
-      //Negative turn
-      else
-        arcadeDrive(0.0,(-(navX.getAngle() - Angle)/(StartingYaw + Angle)));
-    }
-  }
-
-  /**
-  * Position robot to new distance
-  * @param Distance - Distance to move forwards
-  * @author Cody Washington
-  */
-  public void toDistance(double Distance) 
-  {
-    double time = Timer.getFPGATimestamp();
-    while(Math.round(Distance) != Math.round(rightBackMotor.getEncoder().getVelocity() * time))
-    {
-      time = Timer.getFPGATimestamp();
-      //Positive translation
-      if(Math.round(Distance) < Math.round(rightBackMotor.getEncoder().getVelocity() * time))
-        arcadeDrive(Math.round((rightBackMotor.getEncoder().getPosition() / rightBackMotor.getEncoder().getCountsPerRevolution())),0.0);
-      //Negative translation
-      else
-        arcadeDrive(-Math.round((rightBackMotor.getEncoder().getPosition() / rightBackMotor.getEncoder().getCountsPerRevolution())), 0.0);
-    }
-  }
 
   public void stop() {
     arcadeDrive(0, 0);

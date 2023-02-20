@@ -49,13 +49,16 @@ public class LimelightSubsystem extends SubsystemBase {
     return limelight.getEntry("ta").getDouble(0);
   }
 
-  public double getDistance(){
-    return (getArea())/(Limelight.SLOPE);
-  }
-
-  public Pose2d getPose() {
+  public Pose2d getPose() 
+  {
     posevalues = limelight.getEntry("botpose").getDoubleArray(new double[6]);
-    
+    Translation2d translate = new Translation2d(posevalues[0], posevalues[1]);
+    Rotation2d rotation = new Rotation2d(Math.toRadians(posevalues[3]));
+    return new Pose2d(translate, rotation);
+  }
+  public Pose2d getTarget2d() 
+  {
+    posevalues = limelight.getEntry("camerapose_targetspace").getDoubleArray(new double[6]);
     Translation2d translate = new Translation2d(posevalues[0], posevalues[1]);
     Rotation2d rotation = new Rotation2d(Math.toRadians(posevalues[3]));
     return new Pose2d(translate, rotation);
