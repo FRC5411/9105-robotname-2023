@@ -60,7 +60,6 @@ public final class Constants {
     public static final double RAMSETE_B = 2; // Leave as is
     public static final double RAMSETE_ZETA = 0.7; // Leave as is
     
-    // Note: update ratios accordingly
     public static final double GEAR_RATIO = 7.9; // Gearbox ratio
     public static final double WHEEL_RADIUS = 3; // Radius of wheel in inches
     
@@ -118,7 +117,7 @@ public final class Constants {
 
     public static final int ARM_UP_BUTTON = 1;
     public static final int ARM_DOWN_BUTTON = 1;
-    
+
     public static final int CANCEL_CURRENT_COMMAND_BUTTON = 1;
   }
 

@@ -139,8 +139,8 @@ public class DriveSubsystem extends SubsystemBase {
       }
     }
 
-    speed = (GlobalVars.sniperMode) ?  speed * DrivebaseConstants.SNIPER_SPEED : speed * DrivebaseConstants.SPEED_REDUCTION;
-    rotation = (GlobalVars.sniperMode) ?  rotation * DrivebaseConstants.SNIPER_SPEED : rotation * DrivebaseConstants.ROTATION_REDUCTION;
+    speed = (GlobalVars.driveSniperMode) ?  speed * DrivebaseConstants.SNIPER_SPEED : speed * DrivebaseConstants.SPEED_REDUCTION;
+    rotation = (GlobalVars.driveSniperMode) ?  rotation * DrivebaseConstants.SNIPER_SPEED : rotation * DrivebaseConstants.ROTATION_REDUCTION;
 
     robotDrive.arcadeDrive(speed, rotation);
   }
@@ -330,7 +330,7 @@ public class DriveSubsystem extends SubsystemBase {
 
   public void stop() {
     arcadeDrive(0, 0);
-    GlobalVars.sniperMode = false;
+    GlobalVars.driveSniperMode = false;
   }
  
   @Override

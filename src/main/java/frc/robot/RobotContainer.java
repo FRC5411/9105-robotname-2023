@@ -1,24 +1,26 @@
 //In Java We Trust
 
+/*
+ * TO-DO: Setup LEDs for cones and cubes
+ */
+
  package frc.robot;
 
  import com.pathplanner.lib.PathConstraints;
  import com.pathplanner.lib.PathPlanner;
  import com.pathplanner.lib.PathPlannerTrajectory;
-import edu.wpi.first.wpilibj.GenericHID;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+ import edu.wpi.first.wpilibj.GenericHID;
+ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
  import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
  import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.ScheduleCommand;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
+ import edu.wpi.first.wpilibj2.command.InstantCommand;
+ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+ import edu.wpi.first.wpilibj2.command.button.Trigger;
  import frc.robot.subsystems.*;
-import frc.robot.Constants.ButtonBoardConstants;
-import frc.robot.commands.ArcadeCommand;
+ import frc.robot.Constants.ButtonBoardConstants;
+ import frc.robot.commands.ArcadeCommand;
  
  public class RobotContainer {
  
@@ -108,11 +110,11 @@ import frc.robot.commands.ArcadeCommand;
  
    private void configureBindings() {
     LT.whileTrue(new InstantCommand( () -> {
-      GlobalVars.sniperMode = true;
+      GlobalVars.driveSniperMode = true;
     }));
 
     LT.whileFalse(new InstantCommand( () -> {
-      GlobalVars.sniperMode = false;
+      GlobalVars.driveSniperMode = false;
     }));
 
     yButton.onTrue(new InstantCommand( () -> {
@@ -251,7 +253,7 @@ import frc.robot.commands.ArcadeCommand;
       CommandScheduler.getInstance().cancelAll();
     }));
     */
-    
+
     //#endregion
    }
  

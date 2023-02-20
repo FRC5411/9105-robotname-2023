@@ -1,3 +1,4 @@
+
 /*
  * TO-DO: Get num of LEDs and update constants
  */
@@ -33,7 +34,7 @@ public class LEDSubsystem extends SubsystemBase {
   
   public Command setBlue() {
     return new SequentialCommandGroup(
-      new InstantCommand(() -> {
+      new InstantCommand( () -> {
           for (int i = 0; i < LEDBuffer.getLength(); i++) {
             LEDBuffer.setRGB(i, 47, 194, 235);
           }
@@ -46,7 +47,7 @@ public class LEDSubsystem extends SubsystemBase {
 
   public Command setRed() {
     return new SequentialCommandGroup(
-      new InstantCommand(() -> {
+      new InstantCommand( () -> {
           for (int i = 0; i < LEDBuffer.getLength(); i++) {
             LEDBuffer.setRGB(i, 235, 47, 47);
           }
@@ -56,10 +57,36 @@ public class LEDSubsystem extends SubsystemBase {
       )
     );
   }
+
+  public Command setYellow() {
+    return new SequentialCommandGroup(
+      new InstantCommand( () -> {
+        for (int i = 0; i < LEDBuffer.getLength(); i++) {
+          LEDBuffer.setRGB(i, 235, 192, 52);
+        }
+
+          LED.setData(LEDBuffer);
+        }
+      )
+    );
+  }
+
+  public Command setPurple() {
+    return new SequentialCommandGroup(
+      new InstantCommand( () -> {
+        for (int i = 0; i < LEDBuffer.getLength(); i++) {
+          LEDBuffer.setRGB(i, 208, 52, 235);
+        }
+
+          LED.setData(LEDBuffer);
+        }
+      )
+    );
+  }
   
   public Command RGBMode() {
     return new SequentialCommandGroup(
-      new InstantCommand(() -> {
+      new InstantCommand( () -> {
           for (int i = 0; i < LEDBuffer.getLength(); i++) {
             final var hue = (rainbowFirstHue + (i * 180 / LEDBuffer.getLength())) % 180;
 
