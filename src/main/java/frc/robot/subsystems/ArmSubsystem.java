@@ -3,38 +3,37 @@ package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.SparkMaxAlternateEncoder;
 import com.revrobotics.CANSparkMax.IdleMode;
-import com.revrobotics.CANSparkMax.SoftLimitDirection;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.SparkMaxPIDController.AccelStrategy;
 import com.revrobotics.SparkMaxPIDController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.GlobalVars;
 import frc.robot.Constants.*;
 
 public class ArmSubsystem extends SubsystemBase {
 
     private CANSparkMax biscep;
-    private RelativeEncoder biscepEncoder;  
-    private SparkMaxPIDController biscepPID;  
+    private RelativeEncoder biscepEncoder;
+    private SparkMaxAlternateEncoder.Type altEncoderType;  
+    private SparkMaxPIDController biscepPID;
 
     public ArmSubsystem() {
         biscep = new CANSparkMax(ArmConstants.ARM_MOTOR_CANID, MotorType.kBrushless); 
 
         biscep.setIdleMode(IdleMode.kBrake);
 
-        biscepEncoder = biscep.getEncoder();
+        altEncoderType = SparkMaxAlternateEncoder.Type.kQuadrature;
+
+        biscepEncoder = biscep.getAlternateEncoder(altEncoderType, 8192);
 
         biscepEncoder.setPositionConversionFactor(360);
         biscepEncoder.setVelocityConversionFactor(360);
 
         biscep.setSmartCurrentLimit(ArmConstants.ARM_MOTOR_CURRENT_LIMIT);
-        
-        biscep.enableSoftLimit(SoftLimitDirection.kForward, true);
-        biscep.enableSoftLimit(SoftLimitDirection.kReverse, true);
-        biscep.setSoftLimit(SoftLimitDirection.kForward, 15);
-        biscep.setSoftLimit(SoftLimitDirection.kReverse, 0);
 
         biscepPID = biscep.getPIDController();
 
@@ -42,6 +41,10 @@ public class ArmSubsystem extends SubsystemBase {
     }
 
     public void setArm(double speed) {
+        if (GlobalVars.armSniperMode) {
+            speed *= 0.2;
+        }
+
         biscep.set(speed);
     }
 

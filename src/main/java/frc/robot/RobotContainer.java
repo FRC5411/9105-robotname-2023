@@ -34,6 +34,9 @@
    private LimelightSubsystem Limelight;
   
    private Trigger LT;
+   private Trigger LB;
+   private Trigger RT;
+   private Trigger RB;
    private Trigger aButton;
    private Trigger bButton;
    private Trigger xButton;
@@ -66,6 +69,9 @@
      controller = new CommandXboxController(Constants.DrivebaseConstants.CONTROLLER_PORT);
 
      LT = controller.leftTrigger(0.5);
+     LB = controller.leftBumper();
+     RT = controller.rightTrigger(0.5);
+     RB = controller.rightBumper();
      aButton = controller.a();
      bButton = controller.b();
      xButton = controller.x();
@@ -119,36 +125,52 @@
       GlobalVars.driveSniperMode = false;
     }));
 
-    yButton.onTrue(new InstantCommand( () -> {
-      robotArm.armUp();
+    RT.whileTrue(new InstantCommand( () -> {
+      GlobalVars.armSniperMode = true;
     }));
 
-    yButton.onFalse(new InstantCommand( () -> {
-      robotArm.setArm(0);
+    RT.whileFalse(new InstantCommand( () -> {
+      GlobalVars.armSniperMode = false;
     }));
 
-    aButton.onTrue(new InstantCommand( () -> {
-      robotArm.armDown();
-    }));
-
-    aButton.onFalse(new InstantCommand( () -> {
-      robotArm.setArm(0);
-    }));
-
-    xButton.onTrue(new InstantCommand( () -> {
+    LB.onTrue(new InstantCommand( () -> {
       robotIntake.spinin();
     }));
 
-    xButton.onFalse(new InstantCommand( () -> {
+    LB.onFalse(new InstantCommand( () -> {
       robotIntake.setSpin(0);
     }));
 
-    bButton.onTrue(new InstantCommand( () -> {
+    RB.onTrue(new InstantCommand( () -> {
       robotIntake.spinout();
     }));
 
-    bButton.onFalse(new InstantCommand( () -> {
+    RB.onFalse(new InstantCommand( () -> {
       robotIntake.setSpin(0);
+    }));
+
+    yButton.onTrue(new InstantCommand( () -> {
+      GlobalVars.speedReduction = -0.25;
+      robotArm.setArm(-0.25);
+    }));
+
+    yButton.onFalse(new InstantCommand( () -> {
+      if (Math.abs(GlobalVars.speedReduction) > 0) {
+        GlobalVars.speedReduction += 0.001;
+      }
+      robotArm.setArm(GlobalVars.speedReduction);
+    }));
+
+    aButton.onTrue(new InstantCommand( () -> {
+      GlobalVars.speedReduction = 0.25;
+      robotArm.setArm(0.25);
+    }));
+
+    aButton.onFalse(new InstantCommand( () -> {
+      if (GlobalVars.speedReduction > 0) {
+        GlobalVars.speedReduction -= 0.001;
+      }
+      robotArm.setArm(GlobalVars.speedReduction);
     }));
 
     //#region Button board
