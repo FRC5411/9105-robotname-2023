@@ -157,6 +157,7 @@
     yButton.onFalse(new InstantCommand( () -> {
       if (Math.abs(GlobalVars.speedReduction) > 0) {
         GlobalVars.speedReduction += 0.001;
+        System.out.println("Y_BUTTON REDUCTION");
       }
       robotArm.setArm(GlobalVars.speedReduction);
     }));
@@ -169,6 +170,7 @@
     aButton.onFalse(new InstantCommand( () -> {
       if (GlobalVars.speedReduction > 0) {
         GlobalVars.speedReduction -= 0.001;
+        System.out.println("A_BUTTON REDUCTION");
       }
       robotArm.setArm(GlobalVars.speedReduction);
     }));
