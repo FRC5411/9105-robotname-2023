@@ -1,7 +1,7 @@
 //In Java We Trust
 
 /*
- * TO-DO: Setup LEDs for cones and cubes
+ * TO-DO: Fix commands
  */
 
  package frc.robot;
@@ -150,29 +150,39 @@
     }));
 
     yButton.onTrue(new InstantCommand( () -> {
-      GlobalVars.speedReduction = -0.25;
       robotArm.setArm(-0.25);
     }));
 
     yButton.onFalse(new InstantCommand( () -> {
-      if (Math.abs(GlobalVars.speedReduction) > 0) {
-        GlobalVars.speedReduction += 0.001;
-        System.out.println("Y_BUTTON REDUCTION");
-      }
-      robotArm.setArm(GlobalVars.speedReduction);
+      robotArm.setArm(0);
     }));
 
     aButton.onTrue(new InstantCommand( () -> {
-      GlobalVars.speedReduction = 0.25;
       robotArm.setArm(0.25);
     }));
 
     aButton.onFalse(new InstantCommand( () -> {
-      if (GlobalVars.speedReduction > 0) {
-        GlobalVars.speedReduction -= 0.001;
-        System.out.println("A_BUTTON REDUCTION");
-      }
-      robotArm.setArm(GlobalVars.speedReduction);
+      robotArm.setArm(0);
+    }));
+
+    /* 
+    bButton.onTrue(new InstantCommand( () -> {
+      robotArm.front();
+    }));
+
+    bButton.onFalse(new InstantCommand( () -> {
+      robotArm.setArm(0);
+    }));
+    */
+
+    xButton.whileTrue(new InstantCommand( () -> {
+      GlobalVars.testSubtraction = 25;
+      System.out.println("Testing On:  " + GlobalVars.testSubtraction);
+    }));
+
+    xButton.whileFalse(new InstantCommand( () -> {
+      GlobalVars.testSubtraction -= 1;
+      System.out.println("Testing Off:  " + GlobalVars.testSubtraction);
     }));
 
     //#region Button board

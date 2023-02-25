@@ -2,17 +2,19 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.RelativeEncoder;
-import com.revrobotics.SparkMaxAlternateEncoder;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-import com.revrobotics.SparkMaxPIDController.AccelStrategy;
+import com.revrobotics.RelativeEncoder;
+import com.revrobotics.SparkMaxAlternateEncoder;
 import com.revrobotics.SparkMaxPIDController;
+import com.revrobotics.SparkMaxPIDController.AccelStrategy;
+
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.ArmConstants;
 import frc.robot.GlobalVars;
-import frc.robot.Constants.*;
 
 public class ArmSubsystem extends SubsystemBase {
 
@@ -20,6 +22,7 @@ public class ArmSubsystem extends SubsystemBase {
     private RelativeEncoder biscepEncoder;
     private SparkMaxAlternateEncoder.Type altEncoderType;  
     private SparkMaxPIDController biscepPID;
+    private double setpoint;
 
     public ArmSubsystem() {
         biscep = new CANSparkMax(ArmConstants.ARM_MOTOR_CANID, MotorType.kBrushless); 
@@ -37,7 +40,17 @@ public class ArmSubsystem extends SubsystemBase {
 
         biscepPID = biscep.getPIDController();
 
-        configPID(0, 0, 0, 0, 0, 0, biscepEncoder, biscepPID);
+        // TO-DO: Adjust soft limits for testing
+        /* 
+        biscep.enableSoftLimit(CANSparkMax.SoftLimitDirection.kForward, true);
+        biscep.enableSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, true);
+
+        biscep.setSoftLimit(CANSparkMax.SoftLimitDirection.kForward, 30);
+        biscep.setSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, 0);
+        */
+
+        // TO-DO: Tune this so it doesn't kill us
+        configPID(0.031219, 0, 0.014033, 0.1, 0.1, 0, biscepEncoder, biscepPID);
     }
 
     public void setArm(double speed) {
@@ -57,6 +70,7 @@ public class ArmSubsystem extends SubsystemBase {
     }
 
     public void posArm(double angle) {
+        setpoint = angle;
         biscepPID.setReference(angle, CANSparkMax.ControlType.kPosition);
     }
 
@@ -136,7 +150,10 @@ public class ArmSubsystem extends SubsystemBase {
         return new InstantCommand(() -> fetch(MODE), arm);
     }
 
-    @Override  public void periodic() {}
+    @Override  
+    public void periodic() {
+        SmartDashboard.putNumber("Setpoint", setpoint);
+    }
    
     @Override  public void simulationPeriodic() {}
 
