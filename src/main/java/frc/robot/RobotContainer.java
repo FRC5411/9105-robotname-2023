@@ -19,7 +19,8 @@
  import edu.wpi.first.wpilibj2.command.button.JoystickButton;
  import edu.wpi.first.wpilibj2.command.button.Trigger;
  import frc.robot.subsystems.*;
- import frc.robot.Constants.ButtonBoardConstants;
+import frc.robot.Constants.ArmConstants;
+import frc.robot.Constants.ButtonBoardConstants;
  import frc.robot.commands.ArcadeCommand;
  
  public class RobotContainer {
@@ -134,6 +135,9 @@
     }));
 
     LB.onTrue(new InstantCommand( () -> {
+      if(robotIntake.getIntakeCurrent() > ArmConstants.GRABBER_MOTOR_CURRENT_LIMIT) {
+        robotArm.setArm(0);
+      }
       robotIntake.spinin();
     }));
 
@@ -142,6 +146,9 @@
     }));
 
     RB.onTrue(new InstantCommand( () -> {
+      if(robotIntake.getIntakeCurrent() > ArmConstants.GRABBER_MOTOR_CURRENT_LIMIT) {
+        robotArm.setArm(0);
+      }
       robotIntake.spinout();
     }));
 
@@ -150,6 +157,9 @@
     }));
 
     yButton.onTrue(new InstantCommand( () -> {
+      if (robotArm.getArmCurrent() > ArmConstants.ARM_MOTOR_CURRENT_LIMIT) {
+        robotArm.setArm(0);
+      }
       robotArm.setArm(-0.25);
     }));
 
@@ -158,6 +168,9 @@
     }));
 
     aButton.onTrue(new InstantCommand( () -> {
+      if (robotArm.getArmCurrent() > ArmConstants.ARM_MOTOR_CURRENT_LIMIT) {
+        robotArm.setArm(0);
+      }
       robotArm.setArm(0.25);
     }));
 

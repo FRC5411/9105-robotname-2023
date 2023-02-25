@@ -36,8 +36,6 @@ public class ArmSubsystem extends SubsystemBase {
         biscepEncoder.setPositionConversionFactor(360);
         biscepEncoder.setVelocityConversionFactor(360);
 
-        biscep.setSmartCurrentLimit(ArmConstants.ARM_MOTOR_CURRENT_LIMIT);
-
         biscepPID = biscep.getPIDController();
 
         // TO-DO: Adjust soft limits for testing
@@ -122,6 +120,10 @@ public class ArmSubsystem extends SubsystemBase {
         }
     }
 
+    public double getArmCurrent() {
+        return biscep.getOutputCurrent();
+    }
+
     public Command midScore(String MODE, ArmSubsystem arm) {
         return new InstantCommand(() -> midArmScore(MODE), arm);
     }
@@ -152,7 +154,8 @@ public class ArmSubsystem extends SubsystemBase {
 
     @Override  
     public void periodic() {
-        SmartDashboard.putNumber("Setpoint", setpoint);
+        SmartDashboard.putNumber("Setpoint: ", setpoint);
+        SmartDashboard.putNumber("Arm Current: ", getArmCurrent());
     }
    
     @Override  public void simulationPeriodic() {}
