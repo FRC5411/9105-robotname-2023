@@ -160,7 +160,7 @@ import frc.robot.Constants.ButtonBoardConstants;
       if (robotArm.getArmCurrent() > ArmConstants.ARM_MOTOR_CURRENT_LIMIT) {
         robotArm.setArm(0);
       }
-      robotArm.setArm(-0.25);
+      robotArm.setArm(-ArmConstants.ARM_MOTOR_SPEED);
     }));
 
     yButton.onFalse(new InstantCommand( () -> {
@@ -171,7 +171,7 @@ import frc.robot.Constants.ButtonBoardConstants;
       if (robotArm.getArmCurrent() > ArmConstants.ARM_MOTOR_CURRENT_LIMIT) {
         robotArm.setArm(0);
       }
-      robotArm.setArm(0.25);
+      robotArm.setArm(ArmConstants.ARM_MOTOR_SPEED);
     }));
 
     aButton.onFalse(new InstantCommand( () -> {
