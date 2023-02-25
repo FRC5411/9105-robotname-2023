@@ -1,8 +1,6 @@
 
 package frc.robot.subsystems;
 
-import java.util.function.DoubleSupplier;
-
 import com.kauailabs.navx.frc.AHRS;
 import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.commands.PPRamseteCommand;
@@ -14,13 +12,7 @@ import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.estimator.DifferentialDrivePoseEstimator;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
-import edu.wpi.first.networktables.DoubleSubscriber;
-import edu.wpi.first.networktables.GenericEntry;
-import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -240,27 +232,6 @@ public class DriveSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("Gyro Heading: ", getGyroHeading());
     SmartDashboard.putNumber("Left Motor Temp: ", getLeftMotorTemp());
     SmartDashboard.putNumber("Right Motor Temp: ", getRightMotorTemp());
-
-    ShuffleboardTab LFEncoder = Shuffleboard.getTab("LEFT FRONT MOTOR Encoder Value");
-    GenericEntry LFEncoderEntry = LFEncoder.add("Value: ",0).getEntry();
-
-    ShuffleboardTab RFEncoder = Shuffleboard.getTab("RIGHT FRONT MOTOR Encoder Value");
-    GenericEntry RFEncoderEntry = RFEncoder.add("Value: ",0).getEntry();
-
-    ShuffleboardTab gyroHeading = Shuffleboard.getTab("Gyro Heading");
-    GenericEntry gyroEntry = gyroHeading.add("Value: ",0).getEntry();
-
-    ShuffleboardTab LFTemp = Shuffleboard.getTab("LEFT FRONT MOTOR Temp");
-    GenericEntry LFTempEntry = LFTemp.add("Value: ",0).getEntry();
-
-    ShuffleboardTab RFTemp = Shuffleboard.getTab("RIGHT FRONT MOTOR Temp");
-    GenericEntry RFTempEntry = RFTemp.add("Value: ",0).getEntry();
-
-    LFEncoderEntry.setDouble(getLeftEncoderPosition());
-    RFEncoderEntry.setDouble(getRightEncoderPosition());
-    gyroEntry.setDouble(getGyroHeading());
-    LFTempEntry.setDouble(getLeftMotorTemp());
-    RFTempEntry.setDouble(getRightMotorTemp());
   }
 
   /**

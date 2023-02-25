@@ -5,9 +5,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
-import edu.wpi.first.networktables.GenericEntry;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.Constants.*;
@@ -21,7 +18,6 @@ public class IntakeSubsystem extends SubsystemBase{
       ArmConstants.GRABBER_MOTOR_CANID, 
       MotorType.kBrushless
     );
-
   }
 
   public void setSpin(double speed) {
@@ -59,10 +55,5 @@ public class IntakeSubsystem extends SubsystemBase{
   @Override  
   public void periodic() {
       SmartDashboard.putNumber("Intake Current: ", getIntakeCurrent());
-
-      ShuffleboardTab intakeCurrent = Shuffleboard.getTab("Intake Current");
-      GenericEntry intakeCurrentEntry = intakeCurrent.add("Value: ", 0).getEntry();
-
-      intakeCurrentEntry.setDouble(getIntakeCurrent());
   }
 }

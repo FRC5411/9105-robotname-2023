@@ -185,14 +185,12 @@ import frc.robot.Constants.ButtonBoardConstants;
     }));
     */
 
-    xButton.whileTrue(new InstantCommand( () -> {
-      GlobalVars.testSubtraction = 25;
-      System.out.println("Testing On:  " + GlobalVars.testSubtraction);
+    xButton.onTrue(new InstantCommand( () -> {
+
     }));
 
-    xButton.whileFalse(new InstantCommand( () -> {
-      GlobalVars.testSubtraction -= 1;
-      System.out.println("Testing Off:  " + GlobalVars.testSubtraction);
+    xButton.onFalse(new InstantCommand( () -> {
+      robotArm.setArm(0);
     }));
 
     //#region Button board
