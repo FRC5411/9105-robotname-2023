@@ -244,7 +244,23 @@ public class DriveSubsystem extends SubsystemBase {
     ShuffleboardTab LFEncoder = Shuffleboard.getTab("LEFT FRONT MOTOR Encoder Value");
     GenericEntry LFEncoderEntry = LFEncoder.add("Value: ",0).getEntry();
 
+    ShuffleboardTab RFEncoder = Shuffleboard.getTab("RIGHT FRONT MOTOR Encoder Value");
+    GenericEntry RFEncoderEntry = RFEncoder.add("Value: ",0).getEntry();
+
+    ShuffleboardTab gyroHeading = Shuffleboard.getTab("Gyro Heading");
+    GenericEntry gyroEntry = gyroHeading.add("Value: ",0).getEntry();
+
+    ShuffleboardTab LFTemp = Shuffleboard.getTab("LEFT FRONT MOTOR Temp");
+    GenericEntry LFTempEntry = LFTemp.add("Value: ",0).getEntry();
+
+    ShuffleboardTab RFTemp = Shuffleboard.getTab("RIGHT FRONT MOTOR Temp");
+    GenericEntry RFTempEntry = RFTemp.add("Value: ",0).getEntry();
+
     LFEncoderEntry.setDouble(getLeftEncoderPosition());
+    RFEncoderEntry.setDouble(getRightEncoderPosition());
+    gyroEntry.setDouble(getGyroHeading());
+    LFTempEntry.setDouble(getLeftMotorTemp());
+    RFTempEntry.setDouble(getRightMotorTemp());
   }
 
   /**

@@ -9,6 +9,9 @@ import com.revrobotics.SparkMaxAlternateEncoder;
 import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.SparkMaxPIDController.AccelStrategy;
 
+import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -156,6 +159,16 @@ public class ArmSubsystem extends SubsystemBase {
     public void periodic() {
         SmartDashboard.putNumber("Setpoint: ", setpoint);
         SmartDashboard.putNumber("Arm Current: ", getArmCurrent());
+
+        ShuffleboardTab armSetpoint = Shuffleboard.getTab("Arm Setpoint");
+        GenericEntry armSetpointEntry = armSetpoint.add("Value: ",0).getEntry();
+
+        armSetpointEntry.setDouble(setpoint);
+
+        ShuffleboardTab armCurrent = Shuffleboard.getTab("Arm Current");
+        GenericEntry armCurrentEntry = armCurrent.add("Value: ",0).getEntry();
+
+        armCurrentEntry.setDouble(getArmCurrent());
     }
    
     @Override  public void simulationPeriodic() {}
