@@ -9,7 +9,9 @@
  import com.pathplanner.lib.PathConstraints;
  import com.pathplanner.lib.PathPlanner;
  import com.pathplanner.lib.PathPlannerTrajectory;
- import edu.wpi.first.wpilibj.GenericHID;
+
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj.GenericHID;
  import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
  import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
  import edu.wpi.first.wpilibj2.command.Command;
@@ -58,6 +60,8 @@ import frc.robot.Constants.ButtonBoardConstants;
    JoystickButton cancelCurrentCommandButton;
  
    SendableChooser <Command> autonChooser;
+
+   PIDController pid = new PIDController(0.031219, 0, 0.5);
  
    public RobotContainer() {
      LEDs = new LEDSubsystem();
@@ -110,7 +114,8 @@ import frc.robot.Constants.ButtonBoardConstants;
  
      Shuffleboard.getTab("Autonomous: ").add(autonChooser);
 
-    
+     pid.setTolerance(1);
+
      configureBindings();
    }
  
@@ -175,15 +180,15 @@ import frc.robot.Constants.ButtonBoardConstants;
       robotArm.setArm(0);
     }));
 
-    /* 
+     
     bButton.onTrue(new InstantCommand( () -> {
-      robotArm.front();
+      robotArm.setArm(pid.calculate(robotArm.getBiscepEncoderPosition(), 217.2));
     }));
 
     bButton.onFalse(new InstantCommand( () -> {
       robotArm.setArm(0);
     }));
-    */
+    
 
     xButton.onTrue(new InstantCommand( () -> {
 
