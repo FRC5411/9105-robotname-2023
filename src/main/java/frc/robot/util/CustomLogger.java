@@ -6,7 +6,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.time.LocalDateTime;
 
-public class Logger {
+public class CustomLogger {
     
     private DateTimeFormatter DTF = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
     private LocalDateTime time = LocalDateTime.now();
@@ -18,7 +18,7 @@ public class Logger {
     private File file;
     private FileWriter writer;
     
-    public Logger() {
+    public CustomLogger() {
         try {
             file = new File(filepath);
             writer = new FileWriter(file);

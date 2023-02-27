@@ -4,11 +4,9 @@ package frc.robot.subsystems;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-import com.revrobotics.RelativeEncoder;
-import com.revrobotics.SparkMaxAlternateEncoder;
-import com.revrobotics.SparkMaxPIDController;
-import com.revrobotics.SparkMaxPIDController.AccelStrategy;
 
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -19,107 +17,89 @@ import frc.robot.GlobalVars;
 public class ArmSubsystem extends SubsystemBase {
 
     private CANSparkMax biscep;
-    private RelativeEncoder biscepEncoder;
-    private SparkMaxAlternateEncoder.Type altEncoderType;  
-    private SparkMaxPIDController biscepPID;
+    private Encoder armBoreEncoder;
+    private PIDController pid;
     private double setpoint;
 
     public ArmSubsystem() {
         biscep = new CANSparkMax(ArmConstants.ARM_MOTOR_CANID, MotorType.kBrushless); 
 
         biscep.setIdleMode(IdleMode.kBrake);
+        armBoreEncoder = new Encoder(0, 1);
 
-        altEncoderType = SparkMaxAlternateEncoder.Type.kQuadrature;
-
-        biscepEncoder = biscep.getAlternateEncoder(altEncoderType, 8192);
-
-        biscepEncoder.setPositionConversionFactor(360);
-        biscepEncoder.setVelocityConversionFactor(360);
-
-        biscep.setSmartCurrentLimit(ArmConstants.ARM_MOTOR_CURRENT_LIMIT);
-
-        biscepPID = biscep.getPIDController();
-
-        // TO-DO: Adjust soft limits for testing
-        /* 
-        biscep.enableSoftLimit(CANSparkMax.SoftLimitDirection.kForward, true);
-        biscep.enableSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, true);
-
-        biscep.setSoftLimit(CANSparkMax.SoftLimitDirection.kForward, 30);
-        biscep.setSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, 0);
-        */
-
-        // TO-DO: Tune this so it doesn't kill us
-        configPID(0.031219, 0, 0.014033, 0.1, 0.1, 0, biscepEncoder, biscepPID);
+        pid = new PIDController(0.031219, 0, 0.5);
     }
 
     public void setArm(double speed) {
         if (GlobalVars.armSniperMode) {
             speed *= 0.2;
         }
-
         biscep.set(speed);
     }
 
-    public void armUp() {
-        biscep.set(0.5);
-    }
-
-    public void armDown() {
-        biscep.set(-0.5);
-    }
-
-    public void posArm(double angle) {
+    public void positionArm(double angle) {
+        angle *= 22.755;
         setpoint = angle;
-        biscepPID.setReference(angle, CANSparkMax.ControlType.kPosition);
+
+        pid.setTolerance(1);
+        
+        setArm(-pid.calculate(armBoreEncoder.getDistance(), angle));
+    }
+
+    public double getBiscepEncoderPosition() {
+        return armBoreEncoder.getDistance() / 22.755;
     }
 
     public void lowArmScore(String mode) {
         if(mode == "CONE") {
-            posArm(ArmConstants.LOW_CONE_ANG);
+            positionArm(ArmConstants.LOW_CONE_ANG);
         }
         if(mode == "CUBE") {
-            posArm(ArmConstants.LOW_CUBE_ANG);
+            positionArm(ArmConstants.LOW_CUBE_ANG);
         }
     }
 
     public void highArmScore(String mode) {        
         if (mode == "CONE") {
-            posArm(ArmConstants.HIGH_CONE_ANG);
+            positionArm(ArmConstants.HIGH_CONE_ANG);
         }
         if (mode == "CUBE") {
-            posArm(ArmConstants.HIGH_CUBE_ANG);
+            positionArm(ArmConstants.HIGH_CUBE_ANG);
         }
     }
    
     public void midArmScore(String mode) {
         if (mode == "CONE") {
-            posArm(ArmConstants.MID_CONE_ANG);
+            positionArm(ArmConstants.MID_CONE_ANG);
         }
         if (mode == "CUBE") {
-            posArm(ArmConstants.MID_CUBE_ANG);
+            positionArm(ArmConstants.MID_CUBE_ANG);
         }
     }
 
     public void idleArmScore() {
-        posArm(ArmConstants.HOLD);
+        positionArm(ArmConstants.HOLD);
     }
 
     public void front() {
-        posArm(ArmConstants.FRONT);
+        positionArm(ArmConstants.FRONT);
     }
 
     public void straight() {
-        posArm(ArmConstants.STRAIGHT);
+        positionArm(ArmConstants.STRAIGHT);
     }
 
     public void fetch(String Mode) {
         if (Mode == "CONE") {
-            posArm(ArmConstants.FETCH_CONE_ANG);
+            positionArm(ArmConstants.FETCH_CONE_ANG);
         }
         if (Mode == "CUBE") {
-            posArm(ArmConstants.FETCH_CUBE_ANG);
+            positionArm(ArmConstants.FETCH_CUBE_ANG);
         }
+    }
+
+    public double getArmCurrent() {
+        return biscep.getOutputCurrent();
     }
 
     public Command midScore(String MODE, ArmSubsystem arm) {
@@ -152,18 +132,10 @@ public class ArmSubsystem extends SubsystemBase {
 
     @Override  
     public void periodic() {
-        SmartDashboard.putNumber("Setpoint", setpoint);
+        SmartDashboard.putNumber("Setpoint: ", setpoint);
+        SmartDashboard.putNumber("Arm Current: ", getArmCurrent());
+        SmartDashboard.putNumber("Arm Encoder: ", getBiscepEncoderPosition());
     }
    
     @Override  public void simulationPeriodic() {}
-
-    public void configPID(double kp, double kd, double FF, double maxV, double maxA, int profile, RelativeEncoder encoder, SparkMaxPIDController controller) {
-        controller.setP(kp, profile);
-        controller.setD(kd, profile);
-        controller.setFF(FF, profile);
-        controller.setSmartMotionMaxAccel(maxA, profile);
-        controller.setSmartMotionMaxVelocity(maxV, profile);
-        controller.setSmartMotionAccelStrategy(AccelStrategy.kSCurve, profile);
-        controller.setFeedbackDevice(encoder);
-    }
 }

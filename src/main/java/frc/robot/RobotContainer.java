@@ -9,17 +9,19 @@
  import com.pathplanner.lib.PathConstraints;
  import com.pathplanner.lib.PathPlanner;
  import com.pathplanner.lib.PathPlannerTrajectory;
- import edu.wpi.first.wpilibj.GenericHID;
+
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj.GenericHID;
  import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
  import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
- import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  import edu.wpi.first.wpilibj2.command.Command;
  import edu.wpi.first.wpilibj2.command.InstantCommand;
  import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
  import edu.wpi.first.wpilibj2.command.button.JoystickButton;
  import edu.wpi.first.wpilibj2.command.button.Trigger;
  import frc.robot.subsystems.*;
- import frc.robot.Constants.ButtonBoardConstants;
+import frc.robot.Constants.ArmConstants;
+import frc.robot.Constants.ButtonBoardConstants;
  import frc.robot.commands.ArcadeCommand;
  
  public class RobotContainer {
@@ -58,6 +60,8 @@
    JoystickButton cancelCurrentCommandButton;
  
    SendableChooser <Command> autonChooser;
+
+   PIDController pid = new PIDController(0.031219, 0, 0.5);
  
    public RobotContainer() {
      LEDs = new LEDSubsystem();
@@ -109,10 +113,9 @@
       true));
  
      Shuffleboard.getTab("Autonomous: ").add(autonChooser);
- 
-     SmartDashboard.putNumber("Left Joystick Y: ", controller.getLeftY());
-     SmartDashboard.putNumber("Right Joystick X: ", controller.getRightX());
-    
+
+     pid.setTolerance(1);
+
      configureBindings();
    }
  
@@ -134,6 +137,9 @@
     }));
 
     LB.onTrue(new InstantCommand( () -> {
+      if(robotIntake.getIntakeCurrent() > ArmConstants.GRABBER_MOTOR_CURRENT_LIMIT) {
+        robotArm.setArm(0);
+      }
       robotIntake.spinin();
     }));
 
@@ -142,6 +148,9 @@
     }));
 
     RB.onTrue(new InstantCommand( () -> {
+      if(robotIntake.getIntakeCurrent() > ArmConstants.GRABBER_MOTOR_CURRENT_LIMIT) {
+        robotArm.setArm(0);
+      }
       robotIntake.spinout();
     }));
 
@@ -150,7 +159,10 @@
     }));
 
     yButton.onTrue(new InstantCommand( () -> {
-      robotArm.setArm(-0.25);
+      if (robotArm.getArmCurrent() > ArmConstants.ARM_MOTOR_CURRENT_LIMIT) {
+        robotArm.setArm(0);
+      }
+      robotArm.setArm(-ArmConstants.ARM_MOTOR_SPEED);
     }));
 
     yButton.onFalse(new InstantCommand( () -> {
@@ -158,31 +170,32 @@
     }));
 
     aButton.onTrue(new InstantCommand( () -> {
-      robotArm.setArm(0.25);
+      if (robotArm.getArmCurrent() > ArmConstants.ARM_MOTOR_CURRENT_LIMIT) {
+        robotArm.setArm(0);
+      }
+      robotArm.setArm(ArmConstants.ARM_MOTOR_SPEED);
     }));
 
     aButton.onFalse(new InstantCommand( () -> {
       robotArm.setArm(0);
     }));
 
-    /* 
+     
     bButton.onTrue(new InstantCommand( () -> {
-      robotArm.front();
+      robotArm.setArm(pid.calculate(robotArm.getBiscepEncoderPosition(), 217.2));
     }));
 
     bButton.onFalse(new InstantCommand( () -> {
       robotArm.setArm(0);
     }));
-    */
+    
 
-    xButton.whileTrue(new InstantCommand( () -> {
-      GlobalVars.testSubtraction = 25;
-      System.out.println("Testing On:  " + GlobalVars.testSubtraction);
+    xButton.onTrue(new InstantCommand( () -> {
+
     }));
 
-    xButton.whileFalse(new InstantCommand( () -> {
-      GlobalVars.testSubtraction -= 1;
-      System.out.println("Testing Off:  " + GlobalVars.testSubtraction);
+    xButton.onFalse(new InstantCommand( () -> {
+      robotArm.setArm(0);
     }));
 
     //#region Button board
