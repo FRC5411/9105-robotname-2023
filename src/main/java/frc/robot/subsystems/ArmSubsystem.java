@@ -6,7 +6,9 @@ import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.util.sendable.SendableRegistry;
 import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -19,6 +21,9 @@ public class ArmSubsystem extends SubsystemBase {
     private CANSparkMax biscep;
     private Encoder armBoreEncoder;
     private PIDController pid;
+    private double kP = 0.031219;
+    private double kI = 0.2;
+    private double kD = 0.5;
     private double setpoint;
 
     public ArmSubsystem() {
@@ -27,7 +32,7 @@ public class ArmSubsystem extends SubsystemBase {
         biscep.setIdleMode(IdleMode.kBrake);
         armBoreEncoder = new Encoder(0, 1);
 
-        pid = new PIDController(0.031219, 0, 0);
+        pid = new PIDController(kP, kI, kD);
     }
 
     public void setArm(double speed) {
