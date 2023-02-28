@@ -23,6 +23,7 @@ import edu.wpi.first.wpilibj.GenericHID;
 import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.ButtonBoardConstants;
  import frc.robot.commands.ArcadeCommand;
+import frc.robot.commands.ArmCommand;
  
  public class RobotContainer {
  
@@ -181,9 +182,7 @@ import frc.robot.Constants.ButtonBoardConstants;
     }));
 
      
-    bButton.onTrue(new InstantCommand( () -> {
-      robotArm.setArm(pid.calculate(robotArm.getBiscepEncoderPosition(), 217.2));
-    }));
+    bButton.onTrue(new ArmCommand(robotArm, 217.2));
 
     bButton.onFalse(new InstantCommand( () -> {
       robotArm.setArm(0);
