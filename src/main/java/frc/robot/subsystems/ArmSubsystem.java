@@ -32,7 +32,7 @@ public class ArmSubsystem extends SubsystemBase {
         biscep.setIdleMode(IdleMode.kBrake);
         armBoreEncoder = new Encoder(0, 1);
 
-        pid = new PIDController(kP, kI, kD);
+        pid = new PIDController(0.031219, 0, 0);
     }
 
     public void setArm(double speed) {
@@ -43,9 +43,12 @@ public class ArmSubsystem extends SubsystemBase {
     }
 
     public void positionArm(double angle) {
-
         angle *= 22.755;
-        setArm(pid.calculate(armBoreEncoder.getDistance(), angle));
+        setpoint = angle;
+
+        pid.setTolerance(1);
+        
+        setArm(-pid.calculate(armBoreEncoder.getDistance(), angle));
     }
 
     public double getBiscepEncoderPosition() {
@@ -136,6 +139,7 @@ public class ArmSubsystem extends SubsystemBase {
     public void periodic() {
         SmartDashboard.putNumber("Setpoint: ", setpoint);
         SmartDashboard.putNumber("Arm Current: ", getArmCurrent());
+        SmartDashboard.putNumber("Arm Encoder: ", getBiscepEncoderPosition());
     }
    
     @Override  public void simulationPeriodic() {}
