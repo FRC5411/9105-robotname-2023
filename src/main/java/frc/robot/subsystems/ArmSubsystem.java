@@ -55,6 +55,10 @@ public class ArmSubsystem extends SubsystemBase {
         return armBoreEncoder.getDistance() / 22.755;
     }
 
+    public double getArmBoreEncoderDistance() {
+        return armBoreEncoder.getDistance();
+    }
+
     public void lowArmScore(String mode) {
         if(mode == "CONE") {
             positionArm(ArmConstants.LOW_CONE_ANG);
