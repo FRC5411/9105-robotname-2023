@@ -1,7 +1,10 @@
+
 package frc.robot.commands;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.util.sendable.SendableRegistry;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.GlobalVars;
 import frc.robot.subsystems.ArmSubsystem;
 
 public class ArmCommand extends CommandBase {
@@ -12,13 +15,15 @@ public class ArmCommand extends CommandBase {
     private double setpoint;
     private PIDController pid;
     private double kP = 0.031219;
-    private double kI = 0.2;
-    private double kD = 0.5;
+    private double kI = 0.0;
+    private double kD = 0.2;
 
     public ArmCommand(ArmSubsystem robotArm, double setpoint) {
         this.robotArm = robotArm;
         this.setpoint = setpoint;
         pid = new PIDController(kP, kI, kD);
+
+        SendableRegistry.setName(pid, "ArmSubsystem", "PID");
     }
 
     @Override
@@ -30,8 +35,10 @@ public class ArmCommand extends CommandBase {
   
     @Override
     public void execute() {
-        double angle = setpoint *= 22.755;
-        robotArm.setArm(pid.calculate(-robotArm.getBiscepEncoderPosition(), angle));
+        System.out.println("ALIGNING ARM");
+        double calc = pid.calculate(-robotArm.getBiscepEncoderPosition(), setpoint);
+        robotArm.setArm(-calc);
+        GlobalVars.armPIDCalculationOutput = calc;
     }
   
     @Override

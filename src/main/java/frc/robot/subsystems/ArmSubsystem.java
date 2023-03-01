@@ -8,7 +8,6 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.util.sendable.SendableRegistry;
 import edu.wpi.first.wpilibj.Encoder;
-import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -21,10 +20,14 @@ public class ArmSubsystem extends SubsystemBase {
     private CANSparkMax biscep;
     private Encoder armBoreEncoder;
     private PIDController pid;
+
     private double kP = 0.031219;
-    private double kI = 0.2;
+    private double kI = 0;
     private double kD = 0.5;
     private double setpoint;
+
+    public double highestCurrent;
+    public double pidCalculation;
 
     public ArmSubsystem() {
         biscep = new CANSparkMax(ArmConstants.ARM_MOTOR_CANID, MotorType.kBrushless); 
@@ -32,7 +35,13 @@ public class ArmSubsystem extends SubsystemBase {
         biscep.setIdleMode(IdleMode.kBrake);
         armBoreEncoder = new Encoder(0, 1);
 
-        pid = new PIDController(0.031219, 0, 0);
+        biscep.setSmartCurrentLimit(ArmConstants.ARM_MOTOR_CURRENT_LIMIT);
+
+        pid = new PIDController(kP, kI, kD);
+
+        highestCurrent = GlobalVars.highestAmp;
+
+        SendableRegistry.setName(armBoreEncoder, "ArmSubsystem", "Arm Encoder");
     }
 
     public void setArm(double speed) {
@@ -43,7 +52,7 @@ public class ArmSubsystem extends SubsystemBase {
     }
 
     public void positionArm(double angle) {
-        angle *= 22.755;
+        angle *= 22.755; // Must convert pos in angle to approx encoder ticks
         setpoint = angle;
 
         pid.setTolerance(1);
@@ -144,6 +153,11 @@ public class ArmSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("Setpoint: ", setpoint);
         SmartDashboard.putNumber("Arm Current: ", getArmCurrent());
         SmartDashboard.putNumber("Arm Encoder: ", getBiscepEncoderPosition());
+        SmartDashboard.putNumber("Highest AMP: ", highestCurrent);
+        SmartDashboard.putNumber("ARM PID Calculation: ", pidCalculation);
+
+        highestCurrent = (biscep.getOutputCurrent() > highestCurrent) ? biscep.getOutputCurrent() : highestCurrent;
+        pidCalculation = GlobalVars.armPIDCalculationOutput;
     }
    
     @Override  public void simulationPeriodic() {}
