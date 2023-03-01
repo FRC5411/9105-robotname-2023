@@ -182,12 +182,11 @@ import frc.robot.commands.ArmCommand;
     }));
 
      
-    bButton.onTrue(new ArmCommand(robotArm, 217.2));
+    bButton.whileTrue(new ArmCommand(robotArm, 217.2));
 
     bButton.onFalse(new InstantCommand( () -> {
       robotArm.setArm(0);
     }));
-    
 
     xButton.onTrue(new InstantCommand( () -> {
 
