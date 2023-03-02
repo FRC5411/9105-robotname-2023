@@ -35,10 +35,10 @@ public class ArmCommand extends CommandBase {
   
     @Override
     public void execute() {
-        System.out.println("ALIGNING ARM");
         double calc = pid.calculate(-robotArm.getBiscepEncoderPosition(), setpoint);
         robotArm.setArm(-calc);
         GlobalVars.armPIDCalculationOutput = calc;
+        GlobalVars.currentArmSpeed = calc;
     }
   
     @Override

@@ -8,4 +8,5 @@ public class GlobalVars {
     public static int scoreType = 0;
     public static double highestAmp = 0.0;
     public static double armPIDCalculationOutput = 0.0;
+    public static double currentArmSpeed = 0;
 }

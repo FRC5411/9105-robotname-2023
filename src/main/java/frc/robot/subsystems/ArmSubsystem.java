@@ -7,6 +7,7 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.util.sendable.SendableRegistry;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -20,6 +21,7 @@ public class ArmSubsystem extends SubsystemBase {
     private CANSparkMax biscep;
     private Encoder armBoreEncoder;
     private PIDController pid;
+    public DigitalInput frontStopSwitch;
 
     private double kP = 0.031219;
     private double kI = 0;
@@ -40,6 +42,8 @@ public class ArmSubsystem extends SubsystemBase {
         pid = new PIDController(kP, kI, kD);
 
         highestCurrent = GlobalVars.highestAmp;
+
+        frontStopSwitch = new DigitalInput(2);
 
         SendableRegistry.setName(armBoreEncoder, "ArmSubsystem", "Arm Encoder");
     }
@@ -116,6 +120,14 @@ public class ArmSubsystem extends SubsystemBase {
         }
     }
 
+    public void checkFrontSwitch() {
+        if (frontStopSwitch.get()) {
+            if (GlobalVars.currentArmSpeed < 0) {
+                setArm(0);
+            }
+        }
+    }
+
     public double getArmCurrent() {
         return biscep.getOutputCurrent();
     }
@@ -158,6 +170,7 @@ public class ArmSubsystem extends SubsystemBase {
 
         highestCurrent = (biscep.getOutputCurrent() > highestCurrent) ? biscep.getOutputCurrent() : highestCurrent;
         pidCalculation = GlobalVars.armPIDCalculationOutput;
+        checkFrontSwitch();
     }
    
     @Override  public void simulationPeriodic() {}
