@@ -9,6 +9,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.util.sendable.SendableRegistry;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -21,7 +22,7 @@ public class ArmSubsystem extends SubsystemBase {
     private CANSparkMax biscep;
     private Encoder armBoreEncoder;
     private PIDController pid;
-    public DigitalInput frontStopSwitch;
+    //public DigitalInput frontStopSwitch;
 
     private double kP = 0.031219;
     private double kI = 0;
@@ -43,9 +44,11 @@ public class ArmSubsystem extends SubsystemBase {
 
         highestCurrent = GlobalVars.highestAmp;
 
-        frontStopSwitch = new DigitalInput(2);
+        //frontStopSwitch = new DigitalInput(2);
 
         SendableRegistry.setName(armBoreEncoder, "ArmSubsystem", "Arm Encoder");
+
+        LiveWindow.setEnabled(true);
     }
 
     public void setArm(double speed) {
@@ -120,13 +123,14 @@ public class ArmSubsystem extends SubsystemBase {
         }
     }
 
+    /* 
     public void checkFrontSwitch() {
         if (frontStopSwitch.get()) {
             if (GlobalVars.currentArmSpeed < 0) {
                 setArm(0);
             }
         }
-    }
+    } */
 
     public double getArmCurrent() {
         return biscep.getOutputCurrent();
@@ -170,7 +174,7 @@ public class ArmSubsystem extends SubsystemBase {
 
         highestCurrent = (biscep.getOutputCurrent() > highestCurrent) ? biscep.getOutputCurrent() : highestCurrent;
         pidCalculation = GlobalVars.armPIDCalculationOutput;
-        checkFrontSwitch();
+        //checkFrontSwitch();
     }
    
     @Override  public void simulationPeriodic() {}
