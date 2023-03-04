@@ -14,7 +14,8 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.GenericHID;
  import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
  import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
- import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
  import edu.wpi.first.wpilibj2.command.InstantCommand;
  import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
  import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -62,7 +63,7 @@ import frc.robot.commands.ArmCommand;
  
    SendableChooser <Command> autonChooser;
 
-   PIDController pid = new PIDController(0.031219, 0, 0.5);
+   PIDController pid = new PIDController(0, 0, 0);
  
    public RobotContainer() {
      LEDs = new LEDSubsystem();
