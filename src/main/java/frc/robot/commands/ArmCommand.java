@@ -29,13 +29,16 @@ public class ArmCommand extends CommandBase {
     public ArmCommand(ArmSubsystem robotArm, double setpoint) {
         this.robotArm = robotArm;
         this.setpoint = setpoint;
-        pid = new PIDController(kP, kI, kD);
-
         SendableRegistry.setName(pid, "ArmSubsystem", "PID");
     }
 
     @Override
     public void initialize() {
+      kP = SmartDashboard.getNumber("PID kP", 0.0);
+      kI = SmartDashboard.getNumber("PID kI", 0.0);
+      kD = SmartDashboard.getNumber("PID kD", 0.0);
+      pid = new PIDController(kP, kI, kD);
+ 
       System.out.println("Command ARM ALIGN has started");
       System.out.println("KP: " + kP + "\nKI: " + kI + "KD: " + kD);
 

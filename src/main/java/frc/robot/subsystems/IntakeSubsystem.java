@@ -25,11 +25,11 @@ public class IntakeSubsystem extends SubsystemBase{
   }
 
   public void spinin() {
-    grabber.set(0.5);
+    grabber.set(1);
   }
 
   public void spinout() {
-    grabber.set(-0.5);
+    grabber.set(-1);
   }
 
   public void spinoff() {
