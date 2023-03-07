@@ -19,6 +19,7 @@ public class ArmCommand extends CommandBase {
      private static double kP = SmartDashboard.getNumber("PID kP", 0.0);
      private static double kI = SmartDashboard.getNumber("PID kI", 0.0);
      private static double kD = SmartDashboard.getNumber("PID kD", 0.0);
+     private static double setpointPID = SmartDashboard.getNumber("SETPOINT", 0.0);
  
     /*
      private double kP = 0.031219;
@@ -34,21 +35,23 @@ public class ArmCommand extends CommandBase {
 
     @Override
     public void initialize() {
-      kP = SmartDashboard.getNumber("PID kP", 0.0);
+      kP = SmartDashboard.getNumber("PID kP", 0.034);
       kI = SmartDashboard.getNumber("PID kI", 0.0);
       kD = SmartDashboard.getNumber("PID kD", 0.0);
+      setpointPID = SmartDashboard.getNumber("SETPOINT", 0.0);
+
       pid = new PIDController(kP, kI, kD);
  
       System.out.println("Command ARM ALIGN has started");
-      System.out.println("KP: " + kP + "\nKI: " + kI + "KD: " + kD);
+      System.out.println("KP: " + kP + "\nKI: " + kI + "\nKD: " + kD);
 
       pid.setTolerance(1);
     }
   
     @Override
     public void execute() {
-        double calc = pid.calculate(-robotArm.getBiscepEncoderPosition(), setpoint);
-        robotArm.setArm(-calc);
+        double calc = pid.calculate(robotArm.getBiscepEncoderPosition(), setpointPID);
+        robotArm.setArm(calc);
         GlobalVars.armPIDCalculationOutput = calc;
         GlobalVars.currentArmSpeed = calc;
     }

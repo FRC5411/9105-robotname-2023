@@ -81,16 +81,16 @@ public final class Constants {
 
     public static final double LOW_CUBE_ANG = 45.4;
     public static final double MID_CUBE_ANG = 106.6;
-    public static final double HIGH_CUBE_ANG = 130.6;
+    public static final double HIGH_CUBE_ANG = 175; //GOOD*
 
     public static final double LOW_CONE_ANG = 52.2;
     public static final double MID_CONE_ANG = 93.5;
-    public static final double HIGH_CONE_ANG = 116.6;
+    public static final double HIGH_CONE_ANG = 175; //GOOD
 
     public static final double FETCH_CUBE_ANG = 125.4;
     public static final double FETCH_CONE_ANG = 116.3;
 
-    public static final double FRONT = 221.3;
+    public static final double FRONT = 217; //GOOD
     public static final double STRAIGHT = 180;
     public static final double HOLD = 61.5;
    }

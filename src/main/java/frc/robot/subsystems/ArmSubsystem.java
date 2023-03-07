@@ -6,10 +6,8 @@ import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.util.sendable.SendableRegistry;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Encoder;
-import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -24,9 +22,9 @@ public class ArmSubsystem extends SubsystemBase {
     private PIDController pid;
     //public DigitalInput frontStopSwitch;
 
-    private double kP = 0.031219;
+    private double kP = 0.034;
     private double kI = 0;
-    private double kD = 0.5;
+    private double kD = 0;
     private double setpoint;
 
     public double highestCurrent;
@@ -40,15 +38,13 @@ public class ArmSubsystem extends SubsystemBase {
 
         biscep.setSmartCurrentLimit(ArmConstants.ARM_MOTOR_CURRENT_LIMIT);
 
+        biscep.setInverted(false);
+
         pid = new PIDController(kP, kI, kD);
 
         highestCurrent = GlobalVars.highestAmp;
 
         //frontStopSwitch = new DigitalInput(2);
-
-        SendableRegistry.setName(armBoreEncoder, "ArmSubsystem", "Arm Encoder");
-
-        LiveWindow.setEnabled(true);
     }
 
     public void setArm(double speed) {

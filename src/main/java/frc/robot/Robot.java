@@ -23,9 +23,10 @@ public class Robot extends LoggedRobot
 
   @Override
   public void robotInit() {
-    SmartDashboard.putNumber("PID kP", 0.0);
+    SmartDashboard.putNumber("PID kP", 0.034);
     SmartDashboard.putNumber("PID kI", 0.0);
     SmartDashboard.putNumber("PID kD", 0.0);
+    SmartDashboard.putNumber("SETPOINT", 0.0);
 
     Logger.getInstance().recordMetadata("ArmStrong", "MyProject"); // Set a metadata value
 

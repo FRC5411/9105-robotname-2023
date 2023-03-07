@@ -165,7 +165,7 @@ import frc.robot.commands.ArmCommand;
         robotArm.setArm(0);
       }
       robotArm.setArm(-ArmConstants.ARM_MOTOR_SPEED);
-      GlobalVars.currentArmSpeed = -1;
+      GlobalVars.currentArmSpeed = 1;
     }));
 
     yButton.onFalse(new InstantCommand( () -> {
@@ -177,7 +177,7 @@ import frc.robot.commands.ArmCommand;
         robotArm.setArm(0);
       }
       robotArm.setArm(ArmConstants.ARM_MOTOR_SPEED);
-      GlobalVars.currentArmSpeed = 1;
+      GlobalVars.currentArmSpeed = -1;
     }));
 
     aButton.onFalse(new InstantCommand( () -> {
