@@ -15,6 +15,8 @@ public final class Constants {
         );
   }
 
+
+
   public static class DrivebaseConstants {
     public static final int LF_MOTOR_CANID = 11;
     public static final int LB_MOTOR_CANID = 12;
@@ -27,7 +29,7 @@ public final class Constants {
     public static final int PDH_PORT_CANID = 1;
 
     public static final double DEADZONE = 0.1;
-    public static final double SNIPER_SPEED = 0.2;
+    public static final double SNIPER_SPEED = 0.4;
     public static final double SPEED_REDUCTION = 0.95;
     public static final double ROTATION_REDUCTION = 0.4;
 
@@ -79,20 +81,24 @@ public final class Constants {
     public static final int GRABBER_MOTOR_CURRENT_LIMIT = 50;
     public static final int ARM_MOTOR_SPEED = 1;
 
-    public static final double LOW_CUBE_ANG = 45.4;
-    public static final double MID_CUBE_ANG = 106.6;
+    public static final double LOW_CUBE_ANG = 280; //GOOD
+    public static final double MID_CUBE_ANG = 220; //GOOD
     public static final double HIGH_CUBE_ANG = 175; //GOOD*
 
-    public static final double LOW_CONE_ANG = 52.2;
-    public static final double MID_CONE_ANG = 93.5;
+    public static final double LOW_CONE_ANG = 280; //GOOD
+    public static final double MID_CONE_ANG = 200; //GOOD
     public static final double HIGH_CONE_ANG = 175; //GOOD
 
     public static final double FETCH_CUBE_ANG = 125.4;
     public static final double FETCH_CONE_ANG = 116.3;
 
-    public static final double FRONT = 217; //GOOD
+    public static final double FETCH_CONE_GROUND = 264; //GOOD*
+    public static final double FETCH_CUBE_GROUND = 265; //GOOD*
+
+    public static final double FRONT = 178; //GOOD
     public static final double STRAIGHT = 180;
-    public static final double HOLD = 61.5;
+    public static final double HOLD = 75; //GOOD - HOLDS UP
+    public static final double IDLE = 3; //GOOD
    }
 
   public static class Alliance {
@@ -100,30 +106,31 @@ public final class Constants {
   }
 
   public static class ButtonBoardConstants {
+    public static final int BUTTON_BOARD_PORT = 1;
+
     public static final int SCORE_HIGH_BUTTON = 1;
-    public static final int SCORE_MID_BUTTON = 1;
-    public static final int SCORE_LOW_BUTTON = 1;
+    public static final int SCORE_MID_BUTTON = 2;
+    public static final int SCORE_LOW_BUTTON = 3;
 
-    public static final int TOGGLE_CUBE_MODE_BUTTON = 1;
-    public static final int TOGGLE_CONE_MODE_BUTTON = 1;
+    public static final int TOGGLE_CUBE_MODE_BUTTON = 6;
+    public static final int TOGGLE_CONE_MODE_BUTTON = 5;
 
-    public static final int PICKUP_SUBSTATION_BUTTON = 1;
-    public static final int PICKUP_GROUND_BUTTON = 1;
+    public static final int PICKUP_SUBSTATION_BUTTON = 8;
+    public static final int PICKUP_GROUND_BUTTON = 7;
 
-    public static final int TOGGLE_ALIGNMENT_BUTTON = 1;
-    public static final int TOGGLE_SNIPER_MODE_BUTTON = 1;
+    public static final int TOGGLE_SNIPER_MODE_BUTTON = 4;
 
-    public static final int RETURN_TO_IDLE_BUTTON = 1;
-    public static final int FULL_EXTENSION_BUTTON = 1;
+    public static final int RETURN_TO_IDLE_BUTTON = 9;
 
-    public static final int ARM_UP_BUTTON = 1;
-    public static final int ARM_DOWN_BUTTON = 1;
+    public static final int ARM_UP_BUTTON = 10;
+    public static final int ARM_DOWN_BUTTON = 11;
 
-    public static final int CANCEL_CURRENT_COMMAND_BUTTON = 1;
   }
 
   public static final double BEAM_BALANACED_DRIVE_KP =   1;
   public static final double BEAM_BALANCED_GOAL_DEGREES = 0;
   public static final double BACKWARDS_BALANCING_EXTRA_POWER_MULTIPLIER = 1.35;
   public static final double BEAM_BALANCED_ANGLE_TRESHOLD_DEGREES = 1;
+
+
 }

@@ -20,12 +20,14 @@ public class ArmSubsystem extends SubsystemBase {
     private CANSparkMax biscep;
     private Encoder armBoreEncoder;
     private PIDController pid;
+    private String gameMode;
     //public DigitalInput frontStopSwitch;
 
     private double kP = 0.034;
     private double kI = 0;
     private double kD = 0;
     private double setpoint;
+    private double presentArmSpeed;
 
     public double highestCurrent;
     public double pidCalculation;
@@ -49,7 +51,7 @@ public class ArmSubsystem extends SubsystemBase {
 
     public void setArm(double speed) {
         if (GlobalVars.armSniperMode) {
-            speed *= 0.2;
+            speed *= 0.3;
         }
         biscep.set(speed);
     }
@@ -128,6 +130,22 @@ public class ArmSubsystem extends SubsystemBase {
         }
     } */
 
+    public void limitArmSpeedDown() {
+        if (getBiscepEncoderPosition() < 3) {
+            if (GlobalVars.currentArmSpeed < 0) {
+                setArm(0);
+            }
+        }
+    }
+
+    public void limitArmSpeedOut() {
+        if (getBiscepEncoderPosition() > 277) {
+            if (GlobalVars.currentArmSpeed > 0) {
+                setArm(0);
+            }
+        }
+    }
+
     public double getArmCurrent() {
         return biscep.getOutputCurrent();
     }
@@ -162,14 +180,22 @@ public class ArmSubsystem extends SubsystemBase {
 
     @Override  
     public void periodic() {
+        highestCurrent = (biscep.getOutputCurrent() > highestCurrent) ? biscep.getOutputCurrent() : highestCurrent;
+        pidCalculation = GlobalVars.armPIDCalculationOutput;
+        limitArmSpeedDown();
+        limitArmSpeedOut();
+        GlobalVars.checkGamePieceMode();
+
+        presentArmSpeed = GlobalVars.currentArmSpeed;
+        gameMode = GlobalVars.gamePieceMode;
+
         SmartDashboard.putNumber("Setpoint: ", setpoint);
         SmartDashboard.putNumber("Arm Current: ", getArmCurrent());
         SmartDashboard.putNumber("Arm Encoder: ", getBiscepEncoderPosition());
         SmartDashboard.putNumber("Highest AMP: ", highestCurrent);
         SmartDashboard.putNumber("ARM PID Calculation: ", pidCalculation);
-
-        highestCurrent = (biscep.getOutputCurrent() > highestCurrent) ? biscep.getOutputCurrent() : highestCurrent;
-        pidCalculation = GlobalVars.armPIDCalculationOutput;
+        SmartDashboard.putNumber("Current ARM SPEED: ", presentArmSpeed);
+        SmartDashboard.putString("GAME MODE", gameMode);
         //checkFrontSwitch();
     }
    

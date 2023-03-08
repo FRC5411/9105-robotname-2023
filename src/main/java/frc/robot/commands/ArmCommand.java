@@ -19,7 +19,7 @@ public class ArmCommand extends CommandBase {
      private static double kP = SmartDashboard.getNumber("PID kP", 0.0);
      private static double kI = SmartDashboard.getNumber("PID kI", 0.0);
      private static double kD = SmartDashboard.getNumber("PID kD", 0.0);
-     private static double setpointPID = SmartDashboard.getNumber("SETPOINT", 0.0);
+     //private static double setpointPID = SmartDashboard.getNumber("SETPOINT", 0.0);
  
     /*
      private double kP = 0.031219;
@@ -38,7 +38,7 @@ public class ArmCommand extends CommandBase {
       kP = SmartDashboard.getNumber("PID kP", 0.034);
       kI = SmartDashboard.getNumber("PID kI", 0.0);
       kD = SmartDashboard.getNumber("PID kD", 0.0);
-      setpointPID = SmartDashboard.getNumber("SETPOINT", 0.0);
+      //setpointPID = SmartDashboard.getNumber("SETPOINT", 0.0);
 
       pid = new PIDController(kP, kI, kD);
  
@@ -50,7 +50,7 @@ public class ArmCommand extends CommandBase {
   
     @Override
     public void execute() {
-        double calc = pid.calculate(robotArm.getBiscepEncoderPosition(), setpointPID);
+        double calc = pid.calculate(robotArm.getBiscepEncoderPosition(), setpoint);
         robotArm.setArm(calc);
         GlobalVars.armPIDCalculationOutput = calc;
         GlobalVars.currentArmSpeed = calc;
