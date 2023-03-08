@@ -146,6 +146,23 @@ public class ArmSubsystem extends SubsystemBase {
         }
     }
 
+    public static void checkGamePieceMode() {
+        if (GlobalVars.gamePieceMode.equals("CONE")) {
+          GlobalVars.HIGH_ANG = 175;
+          GlobalVars.MID_ANG = 200;
+          GlobalVars.LOW_ANG = 270;
+          GlobalVars.FETCH_SUBSTATION = 116.3;
+          GlobalVars.FETCH_GRND = 260;
+        }
+        else if (GlobalVars.gamePieceMode.equals("CUBE")) {
+          GlobalVars.HIGH_ANG = 175;
+          GlobalVars.MID_ANG = 220;
+          GlobalVars.LOW_ANG = 260;
+          GlobalVars.FETCH_SUBSTATION = 125.4;
+          GlobalVars.FETCH_GRND = 279;
+        }
+      }
+
     public double getArmCurrent() {
         return biscep.getOutputCurrent();
     }
@@ -184,7 +201,7 @@ public class ArmSubsystem extends SubsystemBase {
         pidCalculation = GlobalVars.armPIDCalculationOutput;
         limitArmSpeedDown();
         limitArmSpeedOut();
-        GlobalVars.checkGamePieceMode();
+        checkGamePieceMode();
 
         presentArmSpeed = GlobalVars.currentArmSpeed;
         gameMode = GlobalVars.gamePieceMode;

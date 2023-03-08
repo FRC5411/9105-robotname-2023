@@ -15,8 +15,6 @@ public final class Constants {
         );
   }
 
-
-
   public static class DrivebaseConstants {
     public static final int LF_MOTOR_CANID = 11;
     public static final int LB_MOTOR_CANID = 12;
@@ -31,7 +29,7 @@ public final class Constants {
     public static final double DEADZONE = 0.1;
     public static final double SNIPER_SPEED = 0.4;
     public static final double SPEED_REDUCTION = 0.95;
-    public static final double ROTATION_REDUCTION = 0.4;
+    public static final double ROTATION_REDUCTION = 0.6;
 
     // TO-DO: GET CORRECT DISTANCE VALUES
     public static final double LOW_SCORE_DISTANCE = 1;
@@ -46,10 +44,10 @@ public final class Constants {
 
   public static class AutonoumousConstants {
     // Note: Update values accordingly
-    public static final double VOLTS = 0;
-    public static final double VOLT_SECONDS_PER_METER = 0;
-    public static final double VOLT_SECONDS_SQUARED_PER_METER = 0;
-    public static final double DRIVE_VELOCITY = 0;
+    public static final double VOLTS = 0.15558;
+    public static final double VOLT_SECONDS_PER_METER = 2.0605;
+    public static final double VOLT_SECONDS_SQUARED_PER_METER = 0.38129;
+    public static final double DRIVE_VELOCITY = 0.0840614;
     
     // Note: Update values accordingly
     public static final double TRACK_WIDTH_METERS = Units.inchesToMeters(6); // Horizontal dist between 2 wheels (Meters)
