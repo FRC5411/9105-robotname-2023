@@ -13,6 +13,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.estimator.DifferentialDrivePoseEstimator;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -29,6 +30,9 @@ public class DriveSubsystem extends SubsystemBase {
   private CANSparkMax leftBackMotor;
   private CANSparkMax rightFrontMotor;
   private CANSparkMax rightBackMotor;
+
+  private MotorControllerGroup leftMotors;
+  private MotorControllerGroup rightMotors;
 
   private DifferentialDrive robotDrive;
   private LimelightSubsystem vision;
@@ -63,10 +67,13 @@ public class DriveSubsystem extends SubsystemBase {
       CANSparkMax.MotorType.kBrushless
     );
 
+    leftMotors = new MotorControllerGroup(leftBackMotor, leftFrontMotor);
+    rightMotors = new MotorControllerGroup(rightBackMotor, rightFrontMotor);
+
     this.vision = vision;
     initialPose = new Pose2d();
 
-    robotDrive = new DifferentialDrive(leftFrontMotor, rightFrontMotor);
+    robotDrive = new DifferentialDrive(leftMotors, rightMotors);
 
     leftEncoder = leftFrontMotor.getEncoder();
     rightEncoder = rightFrontMotor.getEncoder();
