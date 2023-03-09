@@ -47,7 +47,7 @@ public class DriveSubsystem extends SubsystemBase {
   private DifferentialDrivePoseEstimator odometry;
 
   private double avgMotorSpeed;
-  private double kP = 0.01934;
+  private double kP = 1;
   private double kI = 0;
   private double kD = 0;
   private double setpoint;
@@ -80,6 +80,11 @@ public class DriveSubsystem extends SubsystemBase {
 
     this.vision = vision;
     initialPose = new Pose2d();
+
+    leftFrontMotor.setClosedLoopRampRate(DrivebaseConstants.RAMP_RATE);
+    leftBackMotor.setClosedLoopRampRate(DrivebaseConstants.RAMP_RATE);
+    rightFrontMotor.setClosedLoopRampRate(DrivebaseConstants.RAMP_RATE);
+    rightBackMotor.setClosedLoopRampRate(DrivebaseConstants.RAMP_RATE);
 
     robotDrive = new DifferentialDrive(leftMotors, rightMotors);
 
@@ -136,6 +141,7 @@ public class DriveSubsystem extends SubsystemBase {
 
     if (rotation < DrivebaseConstants.DEADZONE && rotation > -DrivebaseConstants.DEADZONE) {
       rotation = 0;
+      pidCalculation = 0;
     }
     else {
       if (rotation > 0) {
@@ -145,20 +151,24 @@ public class DriveSubsystem extends SubsystemBase {
         rotation = -rotation * rotation;
       }
     }
+    /* 
     // Averages the two motor group's speeds
     avgMotorSpeed = (leftMotors.get() + rightMotors.get()) / 2;
 
     // Check if robot is turning right or left
-    if (rotation > 0.1 || rotation < -0.1)  {
-      setpoint = rotation;
-      pidCalculation = pid.calculate(avgMotorSpeed,setpoint) / 2;
-    }
+    if (speed > 0.1 || speed < -0.1)  {
+      setpoint = speed;
+      pidCalculation = pid.calculate(avgMotorSpeed,setpoint);
+      System.out.println("Andrew tate is cute");
+    }*/
 
     speed = (GlobalVars.driveSniperMode) ?  speed * DrivebaseConstants.SNIPER_SPEED : speed * DrivebaseConstants.SPEED_REDUCTION;
-    rotation = (GlobalVars.driveSniperMode) ?  pidCalculation * DrivebaseConstants.SNIPER_SPEED : pidCalculation * DrivebaseConstants.ROTATION_REDUCTION;
+    rotation = (GlobalVars.driveSniperMode) ?  rotation * DrivebaseConstants.SNIPER_SPEED : rotation * DrivebaseConstants.ROTATION_REDUCTION;
 
     leftMotors.set(speed + rotation);
     rightMotors.set(speed - rotation);
+
+    robotDrive.feed();
 
     //robotDrive.arcadeDrive(speed, rotation);
   }
@@ -261,11 +271,10 @@ public class DriveSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("Gyro Heading: ", getGyroHeading());
     SmartDashboard.putNumber("Left Motor Temp: ", getLeftMotorTemp());
     SmartDashboard.putNumber("Right Motor Temp: ", getRightMotorTemp());
-    SmartDashboard.putNumber("DRIVETRAIN SETPOINT: ", setpoint);
-
-    kP = SmartDashboard.getNumber("DRIVE PID P", 0.0);
-    kI = SmartDashboard.getNumber("DRIVE PID I", 0.0);
-    kD = SmartDashboard.getNumber("DRIVE PID D", 0.0);
+    SmartDashboard.putNumber("LF CURRENT", leftFrontMotor.getOutputCurrent());
+    SmartDashboard.putNumber("LB CURRENT", leftBackMotor.getOutputCurrent());
+    SmartDashboard.putNumber("RF CURRENT", rightFrontMotor.getOutputCurrent());
+    SmartDashboard.putNumber("RB CURRENT", rightBackMotor.getOutputCurrent());
   }
 
   /**

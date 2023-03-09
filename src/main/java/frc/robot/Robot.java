@@ -20,10 +20,6 @@ public class Robot extends LoggedRobot
     SmartDashboard.putNumber("PID kI", 0.0);
     SmartDashboard.putNumber("PID kD", 0.0);
 
-    SmartDashboard.putNumber("DRIVE PID P", 0.01934);
-    SmartDashboard.putNumber("DRIVE PID I", 0.0);
-    SmartDashboard.putNumber("DRIVE PID D", 0.0);
-
     CameraServer.startAutomaticCapture();
     m_robotContainer = new RobotContainer();
   }
