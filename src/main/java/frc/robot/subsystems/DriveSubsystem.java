@@ -261,6 +261,11 @@ public class DriveSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("Gyro Heading: ", getGyroHeading());
     SmartDashboard.putNumber("Left Motor Temp: ", getLeftMotorTemp());
     SmartDashboard.putNumber("Right Motor Temp: ", getRightMotorTemp());
+    SmartDashboard.putNumber("DRIVETRAIN SETPOINT: ", setpoint);
+
+    kP = SmartDashboard.getNumber("DRIVE PID P", 0.0);
+    kI = SmartDashboard.getNumber("DRIVE PID I", 0.0);
+    kD = SmartDashboard.getNumber("DRIVE PID D", 0.0);
   }
 
   /**
