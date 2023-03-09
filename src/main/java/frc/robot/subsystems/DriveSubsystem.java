@@ -46,6 +46,14 @@ public class DriveSubsystem extends SubsystemBase {
 
   private DifferentialDrivePoseEstimator odometry;
 
+  private double avgMotorSpeed;
+  private double kP = 0.01934;
+  private double kI = 0;
+  private double kD = 0;
+  private double setpoint;
+  private double pidCalculation;
+  private PIDController pid;
+
   public DriveSubsystem(LimelightSubsystem vision) {
     leftFrontMotor = new CANSparkMax(
       DrivebaseConstants.LF_MOTOR_CANID,
@@ -95,6 +103,9 @@ public class DriveSubsystem extends SubsystemBase {
     );
 
     leftFrontMotor.setInverted(true);
+
+    pid = new PIDController(kP, kI, kD);
+
     resetEncoders();
 
     navX = new AHRS(SPI.Port.kMXP);
@@ -134,11 +145,22 @@ public class DriveSubsystem extends SubsystemBase {
         rotation = -rotation * rotation;
       }
     }
+    // Averages the two motor group's speeds
+    avgMotorSpeed = (leftMotors.get() + rightMotors.get()) / 2;
+
+    // Check if robot is turning right or left
+    if (rotation > 0.1 || rotation < -0.1)  {
+      setpoint = rotation;
+      pidCalculation = pid.calculate(avgMotorSpeed,setpoint) / 2;
+    }
 
     speed = (GlobalVars.driveSniperMode) ?  speed * DrivebaseConstants.SNIPER_SPEED : speed * DrivebaseConstants.SPEED_REDUCTION;
-    rotation = (GlobalVars.driveSniperMode) ?  rotation * DrivebaseConstants.SNIPER_SPEED : rotation * DrivebaseConstants.ROTATION_REDUCTION;
+    rotation = (GlobalVars.driveSniperMode) ?  pidCalculation * DrivebaseConstants.SNIPER_SPEED : pidCalculation * DrivebaseConstants.ROTATION_REDUCTION;
 
-    robotDrive.arcadeDrive(speed, rotation);
+    leftMotors.set(speed + rotation);
+    rightMotors.set(speed - rotation);
+
+    //robotDrive.arcadeDrive(speed, rotation);
   }
 
   public double getLeftEncoderPosition() {

@@ -6,7 +6,6 @@ import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -21,7 +20,6 @@ public class ArmSubsystem extends SubsystemBase {
     private Encoder armBoreEncoder;
     private PIDController pid;
     private String gameMode;
-    //public DigitalInput frontStopSwitch;
 
     private double kP = 0.034;
     private double kI = 0;
