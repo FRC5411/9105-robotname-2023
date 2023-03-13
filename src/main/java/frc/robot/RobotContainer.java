@@ -34,23 +34,16 @@
    private DriveSubsystem robotDrive;
    private ArmSubsystem robotArm;
    private IntakeSubsystem robotIntake;
-   private LEDSubsystem LEDs;
    private LimelightSubsystem Limelight;
   
    private Trigger LT;
    private Trigger LB;
-   private Trigger RT;
    private Trigger RB;
-   private Trigger aButton;
-   private Trigger bButton;
-   private Trigger xButton;
-   private Trigger yButton;
 
    private JoystickButton scoreHighButton;
    private JoystickButton scoreMidButton;
    private JoystickButton scoreLowButton;
    private JoystickButton toggleCubeModeButton;
-   private JoystickButton toggleConeModeButton;
    private JoystickButton pickupSubstationButton;
    private JoystickButton pickupGroundButton;
    private JoystickButton toggleSniperModeButton;
@@ -61,7 +54,6 @@
    SendableChooser <Command> autonChooser;
  
    public RobotContainer() {
-     LEDs = new LEDSubsystem();
      Limelight = new LimelightSubsystem();
      robotDrive = new DriveSubsystem(Limelight);
      robotArm = new ArmSubsystem();
@@ -72,17 +64,11 @@
 
      LT = controller.leftTrigger(0.5);
      LB = controller.leftBumper();
-     RT = controller.rightTrigger(0.5);
      RB = controller.rightBumper();
-     aButton = controller.a();
-     bButton = controller.b();
-     xButton = controller.x();
-     yButton = controller.y();
 
      scoreHighButton = new JoystickButton(buttonBoard, ButtonBoardConstants.SCORE_HIGH_BUTTON);
      scoreMidButton = new JoystickButton(buttonBoard, ButtonBoardConstants.SCORE_MID_BUTTON);
      scoreLowButton = new JoystickButton(buttonBoard, ButtonBoardConstants.SCORE_LOW_BUTTON);
-     toggleConeModeButton = new JoystickButton(buttonBoard, ButtonBoardConstants.TOGGLE_CONE_MODE_BUTTON);
      toggleCubeModeButton =  new JoystickButton(buttonBoard, ButtonBoardConstants.TOGGLE_CONE_MODE_BUTTON);
      pickupGroundButton = new JoystickButton(buttonBoard, ButtonBoardConstants.PICKUP_GROUND_BUTTON);
      pickupSubstationButton = new JoystickButton(buttonBoard, ButtonBoardConstants.PICKUP_SUBSTATION_BUTTON);
@@ -97,9 +83,9 @@
        robotDrive
        ));
  
-     autonChooser = new SendableChooser<>();
+     autonChooser = new SendableChooser<Command>();
      PathConstraints trajectoryConstraints = new PathConstraints(AutonoumousConstants.DRIVE_VELOCITY, AutonoumousConstants.MAX_ACCELERATION);
-     PathPlannerTrajectory mainTrajectory = PathPlanner.loadPath("TestPath.wpilib.json" , trajectoryConstraints);
+     PathPlannerTrajectory mainTrajectory = PathPlanner.loadPath("RPT-P1-RPM-TM" , trajectoryConstraints);
  
      autonChooser.addOption("Test Path", robotDrive.followPath(
        mainTrajectory,
